@@ -1,0 +1,259 @@
+@charset "utf-8";
+.tc {
+	text-align: center;
+}
+.tr {
+	text-align: right;
+}
+.article {
+	position: relative;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 15px 20px;
+	font-size: 18px;
+	color: #000;
+	z-index: 10;
+	font-family: simsun;
+}
+.number {
+	line-height: 30px;
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 15px;
+}
+.number span {
+	float: right;
+	padding-top: 5px;
+	display: inline-block;
+	line-height: 20px;
+	border-bottom: 1px solid #000;
+}
+.article h1 {
+	font-size: 34px;
+	text-align: center;
+	line-height: 40px;
+}
+.article .small {
+	margin: 5px 0 15px;
+	font-size: 14px;
+	text-align: center;
+	font-weight: bold;
+	color: #666;
+}
+.article .content section + section {
+	margin-top: 10px;
+}
+.article .content h2,
+.article .content h3 {
+	font-size: 22px;
+	line-height: 30px;
+}
+.article .content p {
+	text-indent: 2em;
+	line-height: 1.7;
+}
+.article .content section p {
+	text-indent: 0;
+}
+.article .content p.indent0 {
+	text-indent: 0;
+}
+.article .content p.companyName {
+	font-size: 20px;
+	line-height: 2;
+}
+.article .content p.companyName span {
+	float: left;
+	padding-top: 7px;
+	line-height: 26px;
+	display: inline-block;
+	border-bottom: 1px solid #000;
+}
+.grade {
+	padding-left: 2em;
+	margin: 15px 0;
+}
+.bottom {
+	padding-top: 20px;
+	overflow: hidden;
+	font-weight: bold;
+}
+.bottom .QRcode {
+	overflow: hidden;
+}
+.bottom .QRcode img {
+	width: 50%;
+}
+.bottom div.signature {
+	overflow: hidden;
+	float: right;
+}
+.codeBox {
+	font-family: "Microsoft YaHei";
+}
+.code-group {
+	padding: 20px 25% 0;
+	overflow: hidden;
+}
+.code-group .tit {
+	float: left;
+	font-weight: bold;
+	line-height: 40px;
+}
+.input-control {
+	overflow: hidden;
+}
+.input-control input {
+	width: 100%;
+	height: 40px;
+	padding: 10px;
+	line-height: 18px;
+	color: #0b7da9;
+	font-weight: bold;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+	box-shadow: none;
+}
+.article .content .checkbox {
+	position: relative;
+	display: block;
+	padding-left: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+.article .content .checkbox input[type="checkbox"] {
+    margin-left: -20px;
+    position: absolute;
+    opacity: 0;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+    top: 4px;
+    margin-top: 0;
+}
+.article .content .checkbox label {
+	position: relative;
+	float: left;
+	display: block;
+	min-height: 26px;
+	padding-left: 5px;
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 26px;
+    vertical-align: middle;
+}
+.article .content .checkbox label:before {
+    background-color: #fff;
+    border: 1px solid #666;
+    border-radius: 3px;
+    content: "";
+    display: inline-block;
+    height: 18px;
+    left: 0;
+    top: 4px;
+    margin-left: -20px;
+    position: absolute;
+    transition: border 0.15s ease-in-out 0s, color 0.15s ease-in-out 0s;
+    width: 18px;
+}
+.article .content .checkbox input[type="checkbox"]:checked + label:before {
+	content: "\e62e";
+    font-family:"iconfont";
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    color: #555;
+}
+.btn-submit {
+	width: 100px;
+	height: 40px;
+	color: #fff;
+	font-size: 18px;
+	border: 0;
+	border-radius: 5px;
+	background-color: #57b6f7;
+	margin-bottom: 20px;
+}
+.tips {
+	font-size: 16px;
+	font-weight: bold;
+	overflow: hidden;
+	text-align: center;
+}
+.tips span {
+	display: inline-block;
+	overflow: hidden;
+	line-height: 30px;
+}
+.tips .tit {
+	color: #ff0000;
+}
+
+.projectType,
+.projectType .detail{
+	overflow: hidden;
+	font-size: 18px;
+	line-height: 30px;
+}
+.projectType.mt5 {
+	margin-top: 5px;
+}
+.projectType .tit {
+	float: left;
+	margin-right: 5px;
+	font-size: 18px;
+}
+.projectTit,
+.project-item {
+	padding: 3px 0;
+	border-bottom: 2px solid #000;
+}
+.projectType .point {
+	display: block;
+	clear: both;
+	padding-left: 1em;
+}
+.projectType .point span {
+	width: 200px;
+	display: inline-block;
+}
+@media screen and (min-width: 960px) {
+	.bottom .QRcode img {
+	width: 30%;
+	}
+}
+@media (max-width: 767px) {
+	.article h1 {
+		font-size: 30px;
+		line-height: 35px;
+	}
+}
+@media (max-width: 480px) {
+	.bottom div.signature {
+		float: inherit;
+	}
+	.bottom .QRcode {
+		margin-top: 10px;
+		text-align: center;
+	}
+	.bottom .QRcode img {
+		width: 50%;
+	}
+	.code-group {
+		padding: 20px 20px 0;
+	}
+	.tips {
+		text-align: left;
+	}
+	.tips .tit {
+		float: left;
+	}
+	.tips span {
+		display: block;
+	}
+	.projectType .point span {
+		width: auto;
+		margin-right: 20px;
+	}
+}

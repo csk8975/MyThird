@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport"
+    content="target-densitydpi=device-dpi, width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit" />
+<title>天河区开展第三方消防设施检测危险源分析报告(详情)</title>
+<link href="css/base_report.css" rel="stylesheet" type="text/css" />
+<link href="css/style_report.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery/jquery.min.js"></script>
+</head>
+
+<body>
+    <article class="article">
+        <p class="number tr">报告编号:<span th:text="${result.reportNum}"></span>
+        </p>
+        <h1>
+            <span id="company"></span>--天河区开展第三方消防设施检测危险源分析报告
+        </h1>
+        <p class="small">CONSULTATIVE REPORTS</p>
+        <section class="content">
+            <h2 th:text="${result.riskLevel}"><span>评估结果：</span></h2>
+            <section>
+                <h3>结论：</h3>
+                <p th:text="${result.reportConclusion}"></p>
+            </section>
+            <section>
+                <h3>不合格项：</h3>
+                <div class="unqualified-item">
+                    <div class="projectType projectTit">
+                        <div class="tit">工程编号:</div>
+                        <div class="detail" th:text="${result.reportNum}"></div>
+                    </div>
+                    <div class="project-item" th:each="item,stat : ${result.unqualifiedItemList}">
+                        <div class="projectType">
+                            <div class="tit">检 测 项:</div>
+                            <div class="detail" th:text="${item.testItem}"></div>
+                        </div>
+                        <div class="projectType">
+                            <div class="tit">重要等级:</div>
+                            <div class="detail" th:text="${item.importantGrade}"></div>
+                        </div>
+                        <div class="projectType">
+                            <div class="tit">规范要求:</div>
+                            <div class="detail" th:text="${item.requirements}"></div>
+                        </div>
+                        <div class="projectType mt5">
+                            <div class="tit">以下是不符合规范要求的检测点：</div>
+                            <ul class="point" th:each="subItem,subStat : ${item.unqualifiedCheckPoint}">
+                                <li th:text="${subItem.checkPoint}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h3>整改意见：</h3>
+                <p th:text="${result.rectifyComments}"></p>
+            </section>
+            <div class="bottom">
+            <div class="signature">
+                <p class="tr">天河区消防安全委员会</p>
+                <p class="tr">广州市公安局天河区分局</p>
+                <p class="tr" th:text="${result.reportDate}">2017年1月20日</p>
+            </div>
+        </div>
+    </article>
+    <!-- <div class="watermark"></div> -->
+    <script src="js/report/showDetailReportPage.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+
+spring:
+  profiles:
+    active:
+      - dev
+  thymeleaf:
+    mode: LEGACYHTML5
+
+  http:
+    multipart:
+      max-file-size: 100MB
+      
+  redis:
+    port: 6379
+    host: localhost
+fire:
+  default:
+    riskWeight:
+      levelA: 9
+      levelB: 5
+      levelC: 1
+    riskLevel:
+      firstLevelBoundary: 25.0
+      secondLevelBoundary: 65.0
+      thirdLevelBoundary: 85.0
+      
+isDebug: false
+detectionLevelPrefix: 危险等级
+reportNumForDemo: 16GJA153

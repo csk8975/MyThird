@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<!--/*/ <th:block th:include="template/reporttemplate :: head"></th:block> /*/-->
+<title>天河区开展第三方机构消防安全风险评估报告</title>
+</head>
+<body>
+
+    <div id="wrapper fixed-sidebar">
+        <!--/*/ <th:block th:include="template/reporttemplate :: bodypart"></th:block> /*/-->
+        <div class="content-wrapper">
+            <ol class="breadcrumb">
+                <li class="active">天河区开展第三方消防设施检测危险源分析报告</li>
+            </ol>
+            <section class="main-content animated fadeInRight">
+                <form>
+                    <div class="code-group">
+                        <div class="tit">报告提取码：</div>
+                        <div class="input-control">
+                            <input id="extracteCode" type="text" value=""
+                                placeholder="检测报告提取码" />
+                        </div>
+                    </div>
+                    <div class="code-group">
+                        <div class="tit">报告责任人：</div>
+                        <div class="input-control">
+                            <input id="dutyPerson" type="text" value="" placeholder="报告责任人姓名" />
+                        </div>
+                    </div>
+                    <div class="code-group">
+                        <div class="tit">责任人手机：</div>
+                        <div class="input-control">
+                            <input id="dutyTel" type="text" value="" placeholder="报告责任人手机号码" 
+                             onkeyup="value=this.value.replace(/\D+/g,'')"/>
+                        </div>
+                    </div>
+                    <div class="code-group tc">
+                        <a class="btn-submit"
+                            style='display: inline-block; line-height: 40px;'
+                            onclick="submitInfoData()">提交</a>
+                        <!-- <a id="submitInfo" class="btn-submit" style='display: inline-block; line-height: 40px;'>提交</a> -->
+                    </div>
+                    <div class="tips">
+                        <span class="tit">温馨提示：</span> <span>请正确输入您的风险分析报告提取码！</span>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+    <!--/*/ <th:block th:include="template/reporttemplate :: footerpart"></th:block> /*/-->
+    <script src="js/report/getReportPage.js"></script>
+</body>
+</html>

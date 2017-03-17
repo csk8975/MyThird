@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--/*/ <th:block th:include="template/template :: head"></th:block> /*/-->
+<title>消防火情分析</title>
+<body class="fixed-sidebar">
+    <div id="wrapper">
+        <!--/*/ <th:block th:include="template/template :: bodypart"></th:block> /*/-->
+        <div class="content-wrapper">
+            <ol class="breadcrumb">
+                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a href="main">首页</a></li>
+                <li class="active">检测报告主页面</li>
+            </ol>
+            <section class="main-content animated fadeInRight">
+                <div class="content">
+                    <!--/section -->
+                    <div class="section">
+                        <div class="title">
+                            <h1>检测报告</h1>
+                            <div class="toolbar fr">
+                                <!-- <a class="btn btn-default btn-batchdelete" href="javascript:;">
+                                    <i class="iconfont icon-trash fl mr5"></i>批量删除
+                                </a> 
+                                <a class="btn btn-default btn-export" href="javascript:;">
+                                    <i class="iconfont icon-export fl mr5"></i>导出报告
+                                </a> -->
+                                <a class="btn btn-default btn-import" href="javascript:;">
+                                    <i class="iconfont icon-import fl mr5"></i>导入
+                                </a>
+                            </div>
+                        </div>
+                        <div class="sectionMain">
+                            <table id="reportListTable" class="cell-border table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>报告编码</th>
+                                        <th>报告名称</th>
+                                        <th>项目地址</th>
+                                        <th>风险等级</th>
+                                        <th>检测单位</th>
+                                        <th>联系方式</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <!--/section -->
+                    <!-- Content End -->
+                </div>
+            </section>
+            <form id="import-dialog" enctype="multipart/form-data"
+                action="uploadReport" method="post" class="dialog">
+                <div class="form-group">
+                    <input type="file" id="inputfile" name="file">
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--/*/ <th:block th:include="template/template :: footerpart"></th:block> /*/-->
+    <script src="js/report/main.js"></script>
+</body>
+</html>

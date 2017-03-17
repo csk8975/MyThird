@@ -1,0 +1,209 @@
+@charset "utf-8";
+.tc {
+    text-align: center;
+}
+.tr {
+    text-align: right;
+}
+.article {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    font-size: 16px;
+    color: #333333;
+    z-index: 10;
+}
+.number {
+    line-height: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.number span {
+    display: inline-block;
+    line-height: 30px;
+    border-bottom: 1px solid #000;
+}
+.article h1 {
+    font-size: 30px;
+    text-align: center;
+    line-height: 40px;
+    font-weight: bold !important;
+}
+.article .small {
+    margin: 5px 0 15px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold !important;
+    color: #666;
+}
+.article .content section + section {
+    margin: 10px 0;
+}
+.article .content h2,
+.article .content h3 {
+    font-size: 18px;
+    line-height: 40px;
+}
+.article .content p {
+    text-indent: 2em;
+    line-height: 2;
+}
+.article .content span.indent0  {
+    text-indent:-2em !important;
+    font-size:21px;
+    border-bottom: 1px solid #000;
+    line-height:30px;
+    margin-bottom:10px;
+}
+.grade {
+    padding-left: 2em;
+    margin: 0px 0;
+    padding-bottom:20px;
+}
+.grade li{ margin-top:10px; }
+.grade li span>span{ font-style:200px !important; }
+
+.bottom {
+    padding-top: 20px;
+    overflow: hidden;
+    font-weight: bold;
+}
+.bottom .QRcode {
+    overflow: hidden;
+}
+.bottom .QRcode img {
+    width: 30%;
+}
+.bottom div.signature {
+    overflow: hidden;
+    float: right;
+}
+.watermark {
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background-image:url(imgs/watermark.jpg);
+    z-index:999;
+    position:fixed;
+    filter:alpha(opacity=8);  /*支持 IE 浏览器*/
+    -moz-opacity:0.08; /*支持 FireFox 浏览器*/
+    opacity:0.08;  /*支持 Chrome, Opera, Safari 等浏览器*/
+ }
+
+.code-group {
+    padding: 20px 25% 0;
+    overflow: hidden;
+}
+.code-group .tit {
+    float: left;
+    font-weight: bold;
+    line-height: 40px;
+}
+.input-control {
+    overflow: hidden;
+}
+.input-control input {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    line-height: 18px;
+    color: #0b7da9;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-shadow: none;
+}
+.btn-submit {
+    width: 100px;
+    height: 40px;
+    color: #fff;
+    font-size: 18px;
+    border: 0;
+    border-radius: 5px;
+    background-color: #57b6f7;
+    margin-bottom: 20px;
+}
+.tips {
+    font-size: 16px;
+    font-weight: bold;
+    overflow: hidden;
+    text-align: center;
+}
+.tips span {
+    display: inline-block;
+    overflow: hidden;
+    line-height: 30px;
+}
+.tips .tit {
+    color: #ff0000;
+}
+.chk_1,.chk_2,.chk_3,.chk_4 {
+    display: none;
+}
+ 
+/*******STYLE 1*******/
+.chk_1 + label {
+    background-color: #FFF;
+    border: 1px solid #C1CACA;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+    padding: 9px;
+    border-radius: 5px;
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+}
+.chk_1 + label:active {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+.chk_1:checked + label {
+    background-color: #ECF2F7;
+    border: 1px solid #92A1AC;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+    color: #243441;
+}
+
+.chk_1:checked + label:after {
+    content: '\2714';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: #758794;
+    width: 100%;
+    text-align: center;
+    font-size: 1.4em;
+    padding: 1px 0 0 0;
+    vertical-align: text-top;
+}
+
+@media (max-width: 767px) {
+    .article h1 {
+        font-size: 22px;
+        line-height: 30px;
+    }
+    .bottom div.signature {
+        float: inherit;
+    }
+    .bottom .QRcode {
+        margin-top: 10px;
+        text-align: center;
+    }
+    .bottom .QRcode img {
+        width: 60%;
+    }
+    .code-group {
+        padding: 20px 20px 0;
+    }
+    .tips {
+        text-align: left;
+    }
+    .tips .tit {
+        float: left;
+    }
+    .tips span {
+        display: block;
+    }
+}

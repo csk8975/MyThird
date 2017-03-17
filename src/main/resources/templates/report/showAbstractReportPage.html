@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport"
+    content="target-densitydpi=device-dpi, width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit" />
+<title>天河区第三方消防设施检测危险源分析报告</title>
+
+<!-- iconfont -->
+<link href="css/iconfont/iconfont.css" rel="stylesheet" type="text/css" />
+<!-- base css -->
+<link href="css/base_report.css" rel="stylesheet" type="text/css" />
+<link href="css/style_report.css" rel="stylesheet" type="text/css" />
+<!-- JQuery 1.11.3 -->
+<script src="common/jquery/jquery-1.11.3.min.js"></script>
+</head>
+
+<body>
+    <article class="article">
+        <p class="number tr">
+            报告编号:<span class="reportNum"></span>
+        </p>
+        <h1>天河区第三方消防设施检测危险源分析报告</h1>
+        <p class="small">ANALYSIS REPORT</p>
+        <section class="content">
+            <span class="indent0" id="projectName"></span>
+            </p>
+            <p>
+                兹有我办委托第三方技术服务机构于<span id="detectDate"></span>对贵单位开展火灾隐患排查及危险源分析，感谢贵单位对天河区消防安全工作的支持与配合！经现场专业化信息采集及后期严谨分析，贵单位消防安全危险等级分析结果为：
+            </p>
+            <div class="grade">
+                <div class="checkbox">
+                    <input type="checkbox" id="checkbox_a1"
+                        class="chk_1" disabled /> <label
+                        for="checkbox_a1">危险等级1</label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" id="checkbox_a2"
+                        class="chk_1" disabled /> <label
+                        for="checkbox_a2">危险等级2</label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" id="checkbox_a3"
+                        class="chk_1" disabled /> <label
+                        for="checkbox_a3">危险等级3</label>
+                </div>
+
+                <div class="checkbox">
+                    <input type="checkbox" id="checkbox_a4"
+                        class="chk_1" disabled /> <label
+                        for="checkbox_a4">危险等级4</label>
+                </div>
+
+
+            </div>
+            <p>
+                详情请关注微信公众号“天河防火墙GZ”，或扫下方二维码，获取更多信息。回复“危险等级分析”，输入“<span
+                    class="reportNum"></span>”查看消防设施检测危险源分析报告。
+            </p>
+            <div class="bottom">
+                <div class="signature">
+                    <p class="tr">天河区消防安全委员会</p>
+                    <p class="tr">广州市公安局天河区分局</p>
+                    <p class="tr" id="publishData"></p>
+                </div>
+                <div class="QRcode">
+                    <img src="css/imgs/QRcode.jpg" />
+                </div>
+            </div>
+        </section>
+    </article>
+    <script src="js/report/showAbstractReportPage.js"></script>
+</body>
+</html>
