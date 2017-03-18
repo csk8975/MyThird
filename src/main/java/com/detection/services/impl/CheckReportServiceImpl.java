@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.annotation.processing.RoundEnvironment;
 
@@ -45,6 +46,8 @@ import com.detection.services.CheckReportService;
 import com.detection.services.PDFParserService;
 import com.detection.util.DateUtil;
 import com.detection.util.EncryptionHelper;
+
+import ch.qos.logback.core.boolex.Matcher;
 
 @Service
 public class CheckReportServiceImpl implements CheckReportService {
@@ -164,19 +167,20 @@ public class CheckReportServiceImpl implements CheckReportService {
 
         // process on first part
         Iterator<Result> it1 = firstPart.iterator();
+        Pattern digitsPattern = Pattern.compile("^\\d+$");
         //System.out.println("第一部分处理开始=====>>>>>>>>>>>");
         while (it1.hasNext()) {
             CheckReportResultStat element = new CheckReportResultStat();
             Result nextItem = it1.next();
             element.setImportantGrade(nextItem.getLevel());
-            if (nextItem.getValue1() != null && !nextItem.getValue1().equals("")) {
+            if(digitsPattern.matcher(nextItem.getValue1()).matches()){
                 element.setCheckNum(Integer.parseInt(nextItem.getValue1()));
+            }
+            if(digitsPattern.matcher(nextItem.getValue2()).matches()){
+                element.setUnqualifiedNum(Integer.parseInt(nextItem.getValue2()));
             }
             element.setItemCode(nextItem.getLabel());
             element.setItemName(nextItem.getName());
-            if (nextItem.getValue1() != null && !nextItem.getValue1().equals("")) {
-                element.setUnqualifiedNum(Integer.parseInt(nextItem.getValue2()));
-            }
             if(isDebug){
                 System.out.println(element.getItemName() +"   " +element.getItemCode() +"   " +element.getCheckNum() +"   " +element.getUnqualifiedNum());
             }
@@ -190,12 +194,13 @@ public class CheckReportServiceImpl implements CheckReportService {
             CheckItemDetail element = new CheckItemDetail();
             Result nextItem = it2.next();
             element.setImportantGrade(nextItem.getLevel());
-            if (nextItem.getValue1() != null && !nextItem.getValue1().equals("")) {
+            element.setItemCode(nextItem.getLabel());
+            //deprecated
+            //element.setItemName(nextItem.getName());
+            if(digitsPattern.matcher(nextItem.getValue1()).matches()){
                 element.setCheckNum(Integer.parseInt(nextItem.getValue1()));
             }
-            element.setItemCode(nextItem.getLabel());
-            element.setItemName(nextItem.getName());
-            if (nextItem.getValue1() != null && !nextItem.getValue1().equals("")) {
+            if(digitsPattern.matcher(nextItem.getValue2()).matches()){
                 element.setUnqualifiedNum(Integer.parseInt(nextItem.getValue2()));
             }
             if(isDebug){
@@ -223,11 +228,11 @@ public class CheckReportServiceImpl implements CheckReportService {
         checkReport.setCheckReportInfo(checkReportInfo);
         checkReport.setCheckItemDetail(checkItemDetailList);
         checkReport.setCheckReportResultStat(checkReportStatList);
-        checkReport.setUnqualifiedItemDetail(checkReportUnqualifiedItemList);
+        //checkReport.setUnqualifiedItemDetail(checkReportUnqualifiedItemList);
         
         float riskScore = computeRiskScore(checkReport);
-        checkReport.getCheckReportInfo().setRiskScore(riskScore);
-        checkReport.getCheckReportInfo().setRiskLevel(computRiskLevel(riskScore));
+        //checkReport.getCheckReportInfo().setRiskScore(riskScore);
+        //checkReport.getCheckReportInfo().setRiskLevel(computRiskLevel(riskScore));
         
         System.out.println("完成报告解析：\n风险评分: " +riskScore );
         System.out.println("报告号码："+reportCover.getReportNum());

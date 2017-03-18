@@ -30,36 +30,18 @@ public class PDFParserServiceImpl implements PDFParserService {
 
     @Value("${isDebug}")
     static boolean isDebug;
-
-    @Override
-    public PDFParserResult parse_test(File pdfFile) throws IOException {
-        PDDocument pdfDocument = PDDocument.load(pdfFile);
-        PDFParserResult returnObj = new PDFParserResult();
-        PDFTextStripper stripper = new PDFTextStripper();
-        stripper.setSortByPosition(false);
-        stripper.setStartPage(126);
-        stripper.setEndPage(126);
-        String paragraph = stripper.getText(pdfDocument);
-        {
-            List<Result> rs = processOnThirdParagraph(paragraph, returnObj);
-            returnObj.setThirdPart(rs);
-        }
-        return returnObj;
-    }
+    static String globalQAName = null;
 
     @Override
     public PDFParserResult parse(File pdfFile) throws IOException {
-        if(isDebug){
+        if (isDebug) {
             if (pdfFile.canRead()) {
                 System.out.println("file can read!");
             } else {
                 System.out.println("file can not read!");
             }
         }
-        // System.out.println("file length: " + pdfFile.length());
         PDDocument pdfDocument = PDDocument.load(pdfFile);
-        // System.out.println("number of pages: " +
-        // pdfDocument.getNumberOfPages());
         PDFParserResult returnObj = new PDFParserResult();
         int lastPage = pdfDocument.getNumberOfPages();
         PDFTextStripper stripper = new PDFTextStripper();
@@ -67,13 +49,10 @@ public class PDFParserServiceImpl implements PDFParserService {
         stripper.setStartPage(1);
         stripper.setEndPage(lastPage);
         String allText = stripper.getText(pdfDocument);
-        byte[] bytes = allText.getBytes();
-        allText = new String(bytes, "UTF-8");
-        // System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n>>>>>>>>>>>>>>>>>>>>>>>\nALL
-        // text:\n\n"+allText);
         int sIndex = 0;
         int eIndex = 0;
         {
+            // TODO
             String end = "建筑消防设施检测报告";
             eIndex = allText.indexOf(end);
             String paragraph = allText.substring(0, eIndex);
@@ -88,12 +67,9 @@ public class PDFParserServiceImpl implements PDFParserService {
 
         }
         {
+            // TODO first part single item result
             String start = "单项评定结果";
-            bytes = start.getBytes();
-            start = new String(bytes, "UTF-8");
             String end = "检测结论说明";
-            bytes = end.getBytes();
-            end = new String(bytes, "UTF-8");
             sIndex = allText.indexOf(start) + start.length();
             eIndex = allText.indexOf(end);
             String paragraph = allText.substring(sIndex, eIndex);
@@ -106,6 +82,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             returnObj.setFirstPart(rs);
         }
         {
+            // TODO second part conclusion
             String start = "检测结论说明";
             String end = "检测情况统计表";
             sIndex = allText.indexOf(start) + start.length();
@@ -121,6 +98,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             returnObj.getCover().setReportConclusion(rs);
         }
         {
+            // TODO check item detail
             String start = "检测情况统计表";
             String end = "消防设施检测不符合规范要求项目";
             sIndex = allText.indexOf(start) + start.length();
@@ -128,18 +106,17 @@ public class PDFParserServiceImpl implements PDFParserService {
             String paragraph = allText.substring(sIndex, eIndex);
             List<Result> rs = null;
             try {
-                rs = processOnThirdParagraph(paragraph, returnObj);
+                rs = processOnThirdParagraph(paragraph);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             returnObj.setThirdPart(rs);
         }
-        {
+
+        { // TODO unqualified
             String start = "消防设施检测不符合规范要求项目";
-            String end = "消防设备登记";
             sIndex = allText.indexOf(start) + start.length();
-            eIndex = allText.indexOf(end);
-            String paragraph = allText.substring(sIndex, eIndex);
+            String paragraph = allText.substring(sIndex);
             List<ListResult> rs = null;
             try {
                 rs = processOnForthParagraph(paragraph);
@@ -148,18 +125,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             }
             returnObj.setForthPart(rs);
         }
-        {
-            String start = "消防设备登记";
-            sIndex = allText.indexOf(start) + start.length();
-            String paragraph = allText.substring(sIndex);
-            List<ListResult> rs = null;
-            try {
-                rs = processOnFifthParagraph(paragraph);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            returnObj.setFifthPart(rs);
-        }
+        globalQAName = null;
         return returnObj;
     }
 
@@ -167,22 +133,22 @@ public class PDFParserServiceImpl implements PDFParserService {
     public Cover processOnCover(String paragraph) {
         Cover cover = new Cover();
         String[] lines = paragraph.split(getLineEndByOS());
-        if(isDebug){
+        if (isDebug) {
             System.out.println("Entered process on cover...");
             System.out.println("the paragraph is: " + paragraph);
             System.out.println("using \\n to split:" + lines.length);
             String[] liness = paragraph.split("\r\n");
             System.out.println("using \\n to split:" + liness.length);
         }
-        Pattern projectName = Pattern.compile("^项目名称:\\s*(.*)\\s*$");
-        Pattern projectAddress = Pattern.compile("^项目地址:\\s*(.*)\\s*$");
-        Pattern agentName = Pattern.compile("^委托单位:\\s*(.*)\\s*$");
-        Pattern qaName = Pattern.compile("^检测单位:\\s*(.*)\\s*$");
-        Pattern reportNum = Pattern.compile("^天消\\s*(.*)\\s*$");
-        Pattern qaAddress = Pattern.compile("^检测单位地址:\\s*(.*)\\s*$");
-        Pattern contactTel = Pattern.compile("^电\\s+话:\\s*(.*)\\s*$");
-        Pattern contactFax = Pattern.compile("^传\\s+真:\\s*(.*)\\s*$");
-        Pattern contactPostcode = Pattern.compile("^邮\\s+编:\\s*(.*)\\s*$");
+        Pattern projectName = Pattern.compile("项目名称(:|：| )\\s*(.*)\\s*$");
+        Pattern projectAddress = Pattern.compile("项目地址(:|：| )\\s*(.*)\\s*$");
+        Pattern agentName = Pattern.compile("委托单位\\s*(.*)\\s*$");
+        Pattern qaName = Pattern.compile("检测单位(:|：| )\\s*(.*)\\s*$");
+        Pattern reportNum = Pattern.compile("天消\\s*([a-z0-9A-Z]{8})\\s*$");
+        Pattern qaAddress = Pattern.compile("检测单位地址(:|：| )\\s*(.*)\\s*$");
+        Pattern contactTel = Pattern.compile("电\\s+话(:|：| )\\s*(.*)\\s*$");
+        Pattern contactFax = Pattern.compile("传\\s+真(:|：| )\\s*(.*)\\s*$");
+        Pattern contactPostcode = Pattern.compile("邮\\s+编(:|：| )\\s*(.*)\\s*$");
 
         int projectNameLine = 0;
         int projectAddrLine = 0;
@@ -192,49 +158,54 @@ public class PDFParserServiceImpl implements PDFParserService {
                 System.out.println("LINE=>" + line);
             Matcher m = projectName.matcher(line);
             if (m.find()) {
-                cover.setProjectName(m.group(1).replace(" ", ""));
+                cover.setProjectName(m.group(2).replace(" ", "").trim());
                 projectNameLine = i;
                 continue;
             }
             m = projectAddress.matcher(line);
             if (m.find()) {
-                cover.setProjectAddress(m.group(1).replace(" ", ""));
+                cover.setProjectAddress(m.group(2).replace(" ", "").trim());
                 projectAddrLine = i;
                 continue;
             }
             m = agentName.matcher(line);
             if (m.find()) {
-                cover.setAgentName(m.group(1).replace(" ", ""));
+                if (m.group(1).replace(" ", "").equals("") || m.group(1).replace(" ", "") == null)
+                    cover.setAgentName(lines[i + 1].replaceAll("：|:", "").trim());
+                else
+                    cover.setAgentName(m.group(1).replaceAll("：|:", "").trim());
                 continue;
             }
             m = qaName.matcher(line);
             if (m.find()) {
-                cover.setQaName(m.group(1).replace(" ", ""));
+                cover.setQaName(m.group(2).replace(" ", "").trim());
+                // 记录检测机构名，用于第三部分作差异化处理
+                globalQAName = cover.getQaName();
                 continue;
             }
             m = reportNum.matcher(line);
             if (m.find()) {
-                cover.setReportNum(m.group(1).replace(" ", ""));
+                cover.setReportNum(m.group(1).replace(" ", "").trim());
                 continue;
             }
             m = qaAddress.matcher(line);
             if (m.find()) {
-                cover.setQaAddress(m.group(1).replace(" ", ""));
+                cover.setQaAddress(m.group(2).replace(" ", "").trim());
                 continue;
             }
             m = contactTel.matcher(line);
             if (m.find()) {
-                cover.setContactTel(m.group(1).replace(" ", ""));
+                cover.setContactTel(m.group(2).replace(" ", "").trim());
                 continue;
             }
             m = contactFax.matcher(line);
             if (m.find()) {
-                cover.setContactFax(m.group(1).replace(" ", ""));
+                cover.setContactFax(m.group(2).replace(" ", "").trim());
                 continue;
             }
             m = contactPostcode.matcher(line);
             if (m.find()) {
-                cover.setContactPostcode(m.group(1).replace(" ", ""));
+                cover.setContactPostcode(m.group(2).replace(" ", "").trim());
                 continue;
             }
         }
@@ -357,7 +328,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             }
         }
 
-        Pattern jcxPat = Pattern.compile(getLineEndByOS()+"检\\s测\\s项:\\s");
+        Pattern jcxPat = Pattern.compile(getLineEndByOS() + "检\\s测\\s项:\\s");
         Matcher partMat = jcxPat.matcher(paragraph);
         String tempStr = null;
         int start = 0, end = 0;
@@ -440,102 +411,32 @@ public class PDFParserServiceImpl implements PDFParserService {
     }
 
     @Override
-    public List<Result> processOnThirdParagraph(String paragraph, PDFParserResult returnObj) {
+    public List<Result> processOnThirdParagraph(String paragraph) {
         List<Result> rs = new ArrayList<Result>();
-        // 匹配换行+数字.组合
-        Pattern linePat = Pattern.compile(getLineEndByOS()+"[\\d]{1,}[\\.]{0,}");
-        Matcher lineMatcher = linePat.matcher(paragraph);
+        // Pattern elementPattern =
+        // Pattern.compile(getLineEndByOS()+"(\\d+\\.\\d+\\.\\d+).*(A|B|C).*(\\s+|\\s*)(\\d+|/)\\s+(\\d+|/)"+getLineEndByOS());
+        Pattern elementPattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+        Matcher elementMatcher = elementPattern.matcher(paragraph);
+        Pattern gradePattern = Pattern.compile("(" + getLineEndByOS() + "|\\s+)(A|B|C)(\\s+|" + getLineEndByOS() + ")");
+        Pattern valuePattern = Pattern
+                .compile("(" + getLineEndByOS() + "|\\s+)(\\d+|/)\\s+(\\d+|/)(\\s+|" + getLineEndByOS() + ")");
+        Matcher gradeMatcher = gradePattern.matcher(paragraph);
+        Matcher valueMatcher = valuePattern.matcher(paragraph);
         int start = 0;
-        int end = 1;
-        String tempStr = "";
-        // 获取匹配index，截取字段，分别解析
-        if (lineMatcher.find()) {
-            start = lineMatcher.start();
-        }
-        while (lineMatcher.find()) {
-            end = lineMatcher.start();
-            tempStr = paragraph.substring(start, end);
-            // System.out.println(tempStr);
-
-            if (null != tempStr && "".equals(tempStr)) {
-                continue;
+        while (elementMatcher.find(start)) {
+            Result element = new Result();
+            if (gradeMatcher.find(elementMatcher.end()) && valueMatcher.find(elementMatcher.end())) {
+                start = valueMatcher.end();
+                element.setLabel(elementMatcher.group(0));
+                element.setLevel(gradeMatcher.group(2));
+                element.setValue1(valueMatcher.group(2));
+                element.setValue2(valueMatcher.group(3));
             }
-            rs.add(this.parseThirdPart(tempStr, returnObj.getCover().getReportNum()));
-            start = end;
+            if (!element.getValue1().equals("/") && !element.getValue1().equals("0")) {
+                rs.add(element);
+            }
         }
-        tempStr = paragraph.substring(start, paragraph.length() - 1);
-        rs.add(this.parseThirdPart(tempStr, returnObj.getCover().getReportNum()));
         return rs;
-    }
-
-    @Override
-    public Result parseThirdPart(String tempStr, String reportNum) {
-        if (null == reportNum) {
-            reportNum = "none report num";
-        }
-        String label = tempStr.substring(0, tempStr.indexOf(" "));
-        tempStr = tempStr.replace(label, "");
-        String[] lines = tempStr.split(getLineEndByOS());
-        String line = null;
-        String level = null;
-        String value1 = null;
-        String value2 = null;
-        String name = null;
-        StringBuffer sb = new StringBuffer();
-        boolean flag = false;
-        for (int i = 0; i < lines.length; i++) {
-            line = lines[i];
-
-            if (line == null || "".equals(line)) {
-                continue;
-            }
-
-            // 处理脏数据
-            if (line.contains("项目编号") || line.contains("天河区开展第三方消防设施检测项目技术咨询报告") || line.contains(reportNum)) {
-                continue;
-            }
-            // set level
-            flag = false;
-            if (line.startsWith("A") || line.contains(" A")) {
-                level = "A";
-                flag = true;
-            } else if (line.startsWith("B") || line.contains(" B")) {
-                level = "B";
-                flag = true;
-            } else if (line.startsWith("C") || line.contains(" C")) {
-                level = "C";
-                flag = true;
-            }
-            if (flag) {
-                line = line.replace(level, "");
-                line = line.trim();
-                sb.append(line);
-                continue;
-            }
-            // set value1,value2
-            Pattern valuePatt = Pattern.compile("\\s[\\d]{1,}\\s\\s[\\d]{1,}");
-            Matcher m = valuePatt.matcher(line);
-            if (m.find()) {
-                value1 = String.valueOf(m.group().replaceAll(" ", "").charAt(0));// 获取第一位数字
-                value2 = String.valueOf(m.group().replaceAll(" ", "").charAt(1));// 获取第二位数字
-                line = line.replace(m.group(), "");
-                line = line.trim();
-                sb.append(line);
-                continue;
-            }
-            line = line.trim();
-            sb.append(line);
-        }
-        String desription = sb.toString();
-        String solution = null;
-        if (null != desription) {
-            String[] des = desription.split("\\s");
-            if (null != des && des.length == 2) {
-                name = des[0];
-                solution = des[1];
-            }
-        }
-        return new Result(label, name, solution, level, value1, value2);
     }
 
     @Override
@@ -551,7 +452,7 @@ public class PDFParserServiceImpl implements PDFParserService {
     public String processOnSecondParagraph(String paragraph) {
         paragraph = paragraph.trim().replace(" ", "");
         // int lastIndex = paragraph.lastIndexOf("\n");
-        int lastIndex = paragraph.indexOf("****");
+        int lastIndex = paragraph.lastIndexOf("。");
         if (lastIndex < 1)
             return "";
         return paragraph.substring(0, lastIndex);
@@ -560,78 +461,61 @@ public class PDFParserServiceImpl implements PDFParserService {
     @Override
     public List<Result> processOnFirstParagraph(String paragraph) {
         List<Result> rs = new ArrayList<Result>();
-        Pattern linePat = Pattern.compile(getLineEndByOS()+"[\\d]{1,}[\\s]{1}");
-        Matcher lineMatcher = linePat.matcher(paragraph);
-        int start = 0;
-        int end = 1;
+        Pattern itemPattern = Pattern.compile(getLineEndByOS() + "(\\d+)\\s*");
+        Matcher itemMatcher = itemPattern.matcher(paragraph);
+        int startIndex = 0;
+        int endIndex = 0;
+        String itemCode = "";
         String tempStr = "";
-        Result result = null;
-        List<String> strs = null;
-        Pattern labelPat = Pattern.compile(getLineEndByOS()+"[\\d]{1,}[\\s]{1}");
-        Pattern namePat = Pattern.compile("[A|B|C]{1}[\\s]{2}[\\d]{1,}[\\s]{2}[\\d]{1,}");
-        Matcher tempMatcher = null;
-        String tempValue = "";
-        String label = "";
-        String name = "";
-        // 获取匹配index，截取字段，分别解析
-        while (lineMatcher.find()) {
-            strs = new ArrayList<String>();
-            start = lineMatcher.start();
-            if (lineMatcher.find()) {
-                end = lineMatcher.start();
+        boolean findFlag = itemMatcher.find();
+        while (findFlag) {
+            itemCode = itemMatcher.group(1);
+            if (itemMatcher.find()) {
+                findFlag = true;
+                endIndex = itemMatcher.start();
             } else {
-                end = paragraph.length() - 1;
+                findFlag = false;
+                endIndex = paragraph.length();
             }
-            tempStr = paragraph.substring(start, end);
-
-            if (null != tempStr && "".equals(tempStr)) {
-                continue;
-            }
-            // set label
-            tempMatcher = labelPat.matcher(tempStr);
-            while (tempMatcher.find()) {
-                tempValue = tempMatcher.group();
-                tempStr.replace(tempValue, "");
-                tempValue.replace(getLineEndByOS(), "");
-                label = tempValue.trim();
-                tempValue = "";
-            }
-            // set level value1 value2
-            tempMatcher = namePat.matcher(tempStr);
-            while (tempMatcher.find()) {
-                tempValue = tempMatcher.group();
-                tempStr.replace(tempValue, "");
-                strs.add(tempValue);
-            }
-            // set name
-            if (tempStr.trim().split(" ").length > 1) {
-                name = tempStr.trim().split(" ")[1];
-            } else {
-                name = tempStr.trim();
-            }
-            for (String str : strs) {
-                result = new Result();
-                result.setName(name);
-                result.setLabel(label);
-                String[] arr = str.split("\\s\\s");
-                result.setLevel(arr[0]);
-                result.setValue1(arr[1]);
-                result.setValue2(arr[2]);
-                rs.add(result);
-            }
+            tempStr = paragraph.substring(startIndex, endIndex);
+            startIndex = startIndex + getSingleItemResultOfFirstPart(tempStr, itemCode, rs);
         }
+
         return rs;
     }
-    private String getLineEndByOS(){
+
+    private int getSingleItemResultOfFirstPart(String strToParse, String itemCode, List<Result> rs) {
+        // TODO Auto-generated method stub
+        Pattern elementPattern = Pattern.compile("(A|B|C)\\s+(\\d+|/)\\s+(\\d+|/)");
+        Matcher elementMatcher = elementPattern.matcher(strToParse);
+        char itemIndex = 'A' - 1;
+        while (elementMatcher.find()) {
+            char currentItemIndex = elementMatcher.group(1).charAt(0);
+            if (currentItemIndex > itemIndex) {
+                itemIndex = currentItemIndex;
+                Result element = new Result();
+                element.setLabel(itemCode);
+                element.setLevel(elementMatcher.group(1));
+                element.setValue1(elementMatcher.group(2));
+                element.setValue2(elementMatcher.group(3));
+                if (!element.getValue1().equals("/") && !element.getValue1().equals("0")) {
+                    rs.add(element);
+                }
+            } else {
+                return elementMatcher.start();
+            }
+        }
+        return strToParse.length();
+    }
+
+    private String getLineEndByOS() {
         String osName = System.getProperty("os.name");
         String result;
-        if(osName.contains("win") ||osName.contains("Win")){
+        if (osName.contains("win") || osName.contains("Win")) {
             result = "\r\n";
-        }
-        else if(osName.contains("Linux")||osName.contains("linux")){
+        } else if (osName.contains("Linux") || osName.contains("linux")) {
             result = "\n";
-        }
-        else{
+        } else {
             result = "\r";
         }
         return result;
