@@ -228,7 +228,7 @@ public class CheckReportServiceImpl implements CheckReportService {
         checkReport.setCheckReportInfo(checkReportInfo);
         checkReport.setCheckItemDetail(checkItemDetailList);
         checkReport.setCheckReportResultStat(checkReportStatList);
-        //checkReport.setUnqualifiedItemDetail(checkReportUnqualifiedItemList);
+        checkReport.setUnqualifiedItemDetail(checkReportUnqualifiedItemList);
         
         float riskScore = computeRiskScore(checkReport);
         //checkReport.getCheckReportInfo().setRiskScore(riskScore);
