@@ -119,10 +119,10 @@ public class PDFParserServiceImpl implements PDFParserService {
             String end = "消防设备登记";
             sIndex = allText.indexOf(start) + start.length();
             eIndex = allText.lastIndexOf(end);
-            if(eIndex <0 || eIndex<sIndex){
+            if (eIndex < 0 || eIndex < sIndex) {
                 eIndex = allText.length();
             }
-            String paragraph = allText.substring(sIndex,eIndex);
+            String paragraph = allText.substring(sIndex, eIndex);
             List<ListResult> rs = null;
             try {
                 rs = processOnForthParagraph(paragraph);
@@ -330,11 +330,11 @@ public class PDFParserServiceImpl implements PDFParserService {
         Pattern importantGradePattern = Pattern.compile("\\s*重\\s*要\\s*等\\s*级\\s*(：|:)\\s*(A|B|C)");
         Pattern regularPattern = Pattern.compile("\\s*规\\s*范\\s*要\\s*求\\s*(：|:)");
         Pattern unqualifiedItemPattern = Pattern.compile("\\s*以下是不符合规范要求的检测点\\s*(：|:)");
-        //Pattern unqualifiedCheckPointPattern = Pattern.compile("\\d+\\s*.*");
+        // Pattern unqualifiedCheckPointPattern = Pattern.compile("\\d+\\s*.*");
         Matcher itemMatcher = itemPattern.matcher(paragraph);
         boolean findFlag = itemMatcher.find();
         while (findFlag) {
-            int itemNameStartIdx = itemMatcher.end()-itemMatcher.start();
+            int itemNameStartIdx = itemMatcher.end() - itemMatcher.start();
             startIdx = itemMatcher.start();
             if (itemMatcher.find()) {
                 endIdx = itemMatcher.start();
@@ -349,7 +349,8 @@ public class PDFParserServiceImpl implements PDFParserService {
                 tempStr = "";
                 for (String line : lines) {
                     if (!line.contains("广东华健") && !line.contains("广东建筑消防") && !line.contains("清大安质")
-                            && !line.contains("有限公司") && !line.contains("天河区开展") && !line.contains("消防设施检测项目技术咨询报告") && !line.contains("工程编号：") && !line.contains("工程编号:")) {
+                            && !line.contains("有限公司") && !line.contains("天河区开展") && !line.contains("消防设施检测项目技术咨询报告")
+                            && !line.contains("工程编号：") && !line.contains("工程编号:")) {
                         tempStr = tempStr + line + getLineEndByOS();
                     }
                 }
@@ -358,17 +359,18 @@ public class PDFParserServiceImpl implements PDFParserService {
                 Matcher regularMatcher = regularPattern.matcher(tempStr);
                 Matcher unqualifiedItemMatcher = unqualifiedItemPattern.matcher(tempStr);
                 if (importantGradeMatcher.find() && regularMatcher.find() && unqualifiedItemMatcher.find()) {
-                    String checkItem = tempStr.substring(itemNameStartIdx, importantGradeMatcher.start()).trim().replaceAll(" |"+getLineEndByOS(), "");
+                    String checkItem = tempStr.substring(itemNameStartIdx, importantGradeMatcher.start()).trim()
+                            .replaceAll(" |" + getLineEndByOS(), "");
                     String importantGrade = importantGradeMatcher.group(2);
                     String regular = tempStr.substring(regularMatcher.end(), unqualifiedItemMatcher.start()).trim()
                             .replaceAll(getLineEndByOS(), "");
                     String[] unqualifiedCheckPoint = null;
-                    if(globalQAName.contains("华建")){
-                        unqualifiedCheckPoint = tempStr.substring(unqualifiedItemMatcher.end(), tempStr.length()).replaceAll(getLineEndByOS(), "").split(getLineEndByOS());
-                    }
-                    else{
-                    unqualifiedCheckPoint = tempStr.substring(unqualifiedItemMatcher.end(), tempStr.length())
-                            .split(getLineEndByOS());
+                    if (globalQAName.contains("华建")) {
+                        unqualifiedCheckPoint = tempStr.substring(unqualifiedItemMatcher.end(), tempStr.length())
+                                .replaceAll(getLineEndByOS(), "").split(getLineEndByOS());
+                    } else {
+                        unqualifiedCheckPoint = tempStr.substring(unqualifiedItemMatcher.end(), tempStr.length())
+                                .split(getLineEndByOS());
                     }
                     List<String> checkPointList = new ArrayList<String>();
                     for (String point : unqualifiedCheckPoint) {

@@ -17,14 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.annotation.processing.RoundEnvironment;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.detection.config.LevelWeightProperties;
 import com.detection.config.RiskLevelBoundary;
@@ -39,15 +36,11 @@ import com.detection.model.report.entities.CheckReport;
 import com.detection.model.report.entities.CheckReportInfo;
 import com.detection.model.report.entities.CheckReportResultStat;
 import com.detection.model.report.entities.CheckReportUnqualifiedItemDetail;
-import com.detection.model.report.repositories.CheckItemDetailRepository;
 import com.detection.model.report.repositories.CheckReportRepository;
-import com.detection.model.report.repositories.CheckReportResultStatRepository;
 import com.detection.services.CheckReportService;
 import com.detection.services.PDFParserService;
 import com.detection.util.DateUtil;
 import com.detection.util.EncryptionHelper;
-
-import ch.qos.logback.core.boolex.Matcher;
 
 @Service
 public class CheckReportServiceImpl implements CheckReportService {
