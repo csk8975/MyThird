@@ -31,6 +31,7 @@ public class PDFParserServiceImpl implements PDFParserService {
     @Value("${isDebug}")
     static boolean isDebug;
     static String globalQAName = null;
+    static String globalReportNum = null;
 
     @Override
     public PDFParserResult parse(File pdfFile) throws IOException {
@@ -115,8 +116,13 @@ public class PDFParserServiceImpl implements PDFParserService {
 
         { // TODO unqualified
             String start = "消防设施检测不符合规范要求项目";
+            String end = "消防设备登记";
             sIndex = allText.indexOf(start) + start.length();
-            String paragraph = allText.substring(sIndex);
+            eIndex = allText.lastIndexOf(end);
+            if(eIndex <0 || eIndex<sIndex){
+                eIndex = allText.length();
+            }
+            String paragraph = allText.substring(sIndex,eIndex);
             List<ListResult> rs = null;
             try {
                 rs = processOnForthParagraph(paragraph);
@@ -126,6 +132,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             returnObj.setForthPart(rs);
         }
         globalQAName = null;
+        globalReportNum = null;
         return returnObj;
     }
 
@@ -186,6 +193,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             m = reportNum.matcher(line);
             if (m.find()) {
                 cover.setReportNum(m.group(1).replace(" ", "").trim());
+                globalReportNum = cover.getReportNum();
                 continue;
             }
             m = qaAddress.matcher(line);
@@ -316,38 +324,63 @@ public class PDFParserServiceImpl implements PDFParserService {
     @Override
     public List<ListResult> processOnForthParagraph(String paragraph) {
         List<ListResult> rs = new ArrayList<ListResult>();
-        Pattern reportNumPat = Pattern.compile("工程编号:\\s*(\\d+)");
-        String reportNum = "";
-        String[] lineListt = paragraph.split(getLineEndByOS());
-        for (int i = 0; i < lineListt.length; i++) {
-            String line = lineListt[i];
-            Matcher reportNumMat = reportNumPat.matcher(line);
-            if (reportNumMat.find()) {
-                reportNum = line.split(":")[1].trim();
-                break;
+        int startIdx = 0;
+        int endIdx = paragraph.length();
+        Pattern itemPattern = Pattern.compile("\\s*检\\s*测\\s*项\\s*(：|:)");
+        Pattern importantGradePattern = Pattern.compile("\\s*重\\s*要\\s*等\\s*级\\s*(：|:)\\s*(A|B|C)");
+        Pattern regularPattern = Pattern.compile("\\s*规\\s*范\\s*要\\s*求\\s*(：|:)");
+        Pattern unqualifiedItemPattern = Pattern.compile("\\s*以下是不符合规范要求的检测点\\s*(：|:)");
+        //Pattern unqualifiedCheckPointPattern = Pattern.compile("\\d+\\s*.*");
+        Matcher itemMatcher = itemPattern.matcher(paragraph);
+        boolean findFlag = itemMatcher.find();
+        while (findFlag) {
+            int itemNameStartIdx = itemMatcher.end()-itemMatcher.start();
+            startIdx = itemMatcher.start();
+            if (itemMatcher.find()) {
+                endIdx = itemMatcher.start();
+                findFlag = true;
+            } else {
+                endIdx = paragraph.length();
+                findFlag = false;
+            }
+            if (startIdx > 0 && endIdx > 0 && startIdx < endIdx) {
+                String tempStr = paragraph.substring(startIdx, endIdx);
+                String[] lines = tempStr.split(getLineEndByOS());
+                tempStr = "";
+                for (String line : lines) {
+                    if (!line.contains("广东华健") && !line.contains("广东建筑消防") && !line.contains("清大安质")
+                            && !line.contains("有限公司") && !line.contains("天河区开展") && !line.contains("消防设施检测项目技术咨询报告") && !line.contains("工程编号：") && !line.contains("工程编号:")) {
+                        tempStr = tempStr + line + getLineEndByOS();
+                    }
+                }
+
+                Matcher importantGradeMatcher = importantGradePattern.matcher(tempStr);
+                Matcher regularMatcher = regularPattern.matcher(tempStr);
+                Matcher unqualifiedItemMatcher = unqualifiedItemPattern.matcher(tempStr);
+                if (importantGradeMatcher.find() && regularMatcher.find() && unqualifiedItemMatcher.find()) {
+                    String checkItem = tempStr.substring(itemNameStartIdx, importantGradeMatcher.start()).trim().replaceAll(" |"+getLineEndByOS(), "");
+                    String importantGrade = importantGradeMatcher.group(2);
+                    String regular = tempStr.substring(regularMatcher.end(), unqualifiedItemMatcher.start()).trim()
+                            .replaceAll(getLineEndByOS(), "");
+                    String[] unqualifiedCheckPoint = null;
+                    if(globalQAName.contains("华建")){
+                        unqualifiedCheckPoint = tempStr.substring(unqualifiedItemMatcher.end(), tempStr.length()).replaceAll(getLineEndByOS(), "").split(getLineEndByOS());
+                    }
+                    else{
+                    unqualifiedCheckPoint = tempStr.substring(unqualifiedItemMatcher.end(), tempStr.length())
+                            .split(getLineEndByOS());
+                    }
+                    List<String> checkPointList = new ArrayList<String>();
+                    for (String point : unqualifiedCheckPoint) {
+                        if (!point.equals("") && null != point) {
+                            checkPointList.add(point);
+                        }
+                    }
+                    rs.add(new ListResult(globalReportNum, checkItem, importantGrade, regular, checkPointList));
+                }
             }
         }
 
-        Pattern jcxPat = Pattern.compile(getLineEndByOS() + "检\\s测\\s项:\\s");
-        Matcher partMat = jcxPat.matcher(paragraph);
-        String tempStr = null;
-        int start = 0, end = 0;
-        if (partMat.find()) {
-            start = partMat.start();// 设置第一个部分开始位置
-        }
-        while (partMat.find()) {
-            end = partMat.start();
-            tempStr = paragraph.substring(start, end);
-            // System.out.println(tempStr);
-
-            if (null != tempStr && "".equals(tempStr)) {
-                continue;
-            }
-            rs.add(this.parseFourthPart(tempStr, reportNum));
-            start = end;
-        }
-        tempStr = paragraph.substring(start, paragraph.length() - 1);
-        rs.add(this.parseFourthPart(tempStr, reportNum));
         return rs;
     }
 
@@ -413,25 +446,15 @@ public class PDFParserServiceImpl implements PDFParserService {
     @Override
     public List<Result> processOnThirdParagraph(String paragraph) {
         List<Result> rs = new ArrayList<Result>();
-        // Pattern elementPattern =
-        // Pattern.compile(getLineEndByOS()+"(\\d+\\.\\d+\\.\\d+).*(A|B|C).*(\\s+|\\s*)(\\d+|/)\\s+(\\d+|/)"+getLineEndByOS());
-        Pattern elementPattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+        paragraph.replaceAll(getLineEndByOS(), " ");
+        Pattern elementPattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+).*\\s+(A|B|C)\\s+.*\\s+(\\d+|/)\\s+(\\d+|/)\\s+");
         Matcher elementMatcher = elementPattern.matcher(paragraph);
-        Pattern gradePattern = Pattern.compile("(" + getLineEndByOS() + "|\\s+)(A|B|C)(\\s+|" + getLineEndByOS() + ")");
-        Pattern valuePattern = Pattern
-                .compile("(" + getLineEndByOS() + "|\\s+)(\\d+|/)\\s+(\\d+|/)(\\s+|" + getLineEndByOS() + ")");
-        Matcher gradeMatcher = gradePattern.matcher(paragraph);
-        Matcher valueMatcher = valuePattern.matcher(paragraph);
-        int start = 0;
-        while (elementMatcher.find(start)) {
+        while (elementMatcher.find()) {
             Result element = new Result();
-            if (gradeMatcher.find(elementMatcher.end()) && valueMatcher.find(elementMatcher.end())) {
-                start = valueMatcher.end();
-                element.setLabel(elementMatcher.group(0));
-                element.setLevel(gradeMatcher.group(2));
-                element.setValue1(valueMatcher.group(2));
-                element.setValue2(valueMatcher.group(3));
-            }
+            element.setLabel(elementMatcher.group(1));
+            element.setLevel(elementMatcher.group(2));
+            element.setValue1(elementMatcher.group(3));
+            element.setValue2(elementMatcher.group(4));
             if (!element.getValue1().equals("/") && !element.getValue1().equals("0")) {
                 rs.add(element);
             }
