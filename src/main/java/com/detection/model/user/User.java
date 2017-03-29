@@ -11,11 +11,14 @@ import javax.persistence.Id;
 public class User {
 
     @Id
+    @GeneratedValue
+    private long userId;
     private String userName;
     @Column(length = 32)
     private String userPassword;
     @Column(length = 32)
     private String token;
+    private String realName;
     private Date tokenUpdateTime;
     private Date lastLogin;
     private Date loginTime;
@@ -28,6 +31,14 @@ public class User {
     public User(User user) {
         this.userName = user.getUserName();
         this.userPassword = user.getUserPassword();
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getUserName() {
@@ -52,6 +63,14 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
     public Date getTokenUpdateTime() {

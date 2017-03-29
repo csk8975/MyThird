@@ -202,11 +202,11 @@ span {
 <body>
 	<div id="main">
 		<h1 style="text-align: center; line-height: 50px;">
-			<img src="imgs/fail.png" width="48" height="48" /><br />
+			<img th:src="@{/imgs/fail.png}" width="48" height="48" /><br />
 			您填写的信息格式有误，请重新填写！
 		</h1>
 		<p style="text-align: center; margin-top: 20px;">
-			<a href="regist">返回填写</a>
+			<a th:href="@{/regist}">返回填写</a>
 		</p>
 	</div>
 </body>

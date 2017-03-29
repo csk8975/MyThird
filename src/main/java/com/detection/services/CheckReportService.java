@@ -10,6 +10,8 @@ package com.detection.services;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,11 +29,12 @@ public interface CheckReportService {
     /**
      * @author csk
      * @version 1.0
+     * @param request 
      * @throws IOException 
      * @throws Exception 
      * @function 上传报告文件，解析并保存到数据库
      */
-    public boolean uploadAndSaveReport(String path, MultipartFile file) throws IOException, Exception;
+    public boolean uploadAndSaveReport(String path, MultipartFile file, String operatorName) throws IOException, Exception;
     
     /**
      * @author csk
@@ -39,7 +42,7 @@ public interface CheckReportService {
      * @throws IOException 
      * @function 解析文件并保存到数据库
      */
-    public boolean parseAndSaveReportToDB(String upFilePath, String downloadPath) throws IOException;
+    public boolean parseAndSaveReportToDB(String upFilePath, String downloadPath,String operatorName) throws IOException;
     
     /**
      * @author csk

@@ -39,7 +39,7 @@ public class ReportDataController {
      * 校验reportNum、责任人dutyPerson和责任人电话dutyTel
      * 返回校验token
      */
-    @RequestMapping(value = {"/report/submitExtractCode" }, method = RequestMethod.GET)
+/*    @RequestMapping(value = {"/report/submitExtractCode" }, method = RequestMethod.GET)
     public JSONObject submitExtractCode(@RequestParam String reportNum, 
             @RequestParam String dutyPerson, @RequestParam String dutyTel, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
@@ -50,7 +50,7 @@ public class ReportDataController {
             session.setAttribute("watermark", dutyPerson+dutyTel);
         }
         return checkReportService.submitExtractCode(reportNum, dutyPerson, dutyTel);
-    }
+    }*/
     
     @RequestMapping(value = {"/report/getDetailReportInfo" }, method = RequestMethod.GET)
     public JSONObject getDetailReportInfo(@RequestParam String verifyToken, HttpServletRequest request) {

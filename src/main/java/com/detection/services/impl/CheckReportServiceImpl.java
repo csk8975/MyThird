@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -71,7 +73,7 @@ public class CheckReportServiceImpl implements CheckReportService {
     private boolean isDebug;
 
     @Override
-    public boolean uploadAndSaveReport(String fileName, MultipartFile file) throws Exception {
+    public boolean uploadAndSaveReport(String fileName, MultipartFile file, String operatorName) throws Exception {
         boolean result = false;
         fileName = EncryptionHelper.encryptFileNameByMD5(fileName);
         String upFilePath = uploadPath + fileName;
@@ -100,14 +102,14 @@ public class CheckReportServiceImpl implements CheckReportService {
         //System.out.println("file length: "+upFile.length());
         upFileOS.close();
         out.close();
-        parseAndSaveReportToDB(upFilePath, downFilePath);
+        parseAndSaveReportToDB(upFilePath, downFilePath,operatorName);
         result = true;
 
         return result;
     }
 
     @Override
-    public boolean parseAndSaveReportToDB(String upFilePath, String downloadPath) throws IOException {
+    public boolean parseAndSaveReportToDB(String upFilePath, String downloadPath, String operatorName) throws IOException {
 
         boolean result = false;
         // 解析报告并入库
@@ -222,10 +224,11 @@ public class CheckReportServiceImpl implements CheckReportService {
         checkReport.setCheckItemDetail(checkItemDetailList);
         checkReport.setCheckReportResultStat(checkReportStatList);
         checkReport.setUnqualifiedItemDetail(checkReportUnqualifiedItemList);
+        checkReport.setCreatorName(operatorName);
         
         float riskScore = computeRiskScore(checkReport);
-        //checkReport.getCheckReportInfo().setRiskScore(riskScore);
-        //checkReport.getCheckReportInfo().setRiskLevel(computRiskLevel(riskScore));
+        checkReport.getCheckReportInfo().setRiskScore(riskScore);
+        checkReport.getCheckReportInfo().setRiskLevel(computRiskLevel(riskScore));
         
         System.out.println("完成报告解析：\n风险评分: " +riskScore );
         System.out.println("报告号码："+reportCover.getReportNum());

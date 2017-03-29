@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = (String) session.getAttribute("token");
         int role = Integer.parseInt((String) session.getAttribute("role"));
         if (userName != null && token != null) {
-            User user = userRepo.findOne(userName);
+            User user = userRepo.findByUserName(userName);
             if (user != null && isTokenValid(user,token)
                     && role == permittedRole) {
                 result = true;
@@ -65,12 +65,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String userName = (String) session.getAttribute("userName");
         String token = (String) session.getAttribute("token");
         if (userName != null && token != null ) {
-            User user = userRepo.findOne(userName);
+            User user = userRepo.findByUserName(userName);
             if (user != null && isTokenValid(user,token)) {
                 result = true;
             }
         }
         return result;
     }
+
+    @Override
+    public String getUserRealName(HttpServletRequest request) {
+        // TODO Auto-generated method stub
+        String result = null;
+        String userName = (String)request.getSession().getAttribute("userName");
+        if(userName!=null && !userName.equals("")){
+            User user = userRepo.findByUserName(userName);
+            if(user!=null){
+                result = user.getRealName();
+            }
+        }
+        return result;
+    }
+    
 
 }

@@ -12,7 +12,7 @@
         <div class="content-wrapper">
             <ol class="breadcrumb">
                 <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a
-                    href="main">首页</a></li><li class="active">页面不存在</li>
+                    th:href="@{/main}">首页</a></li><li class="active">页面不存在</li>
             </ol>
             <section class="main-content animated fadeInRight">
                 <div class="content">
@@ -20,7 +20,7 @@
                     <div class="error_page">
                         <div class="error_main">
                             <div class="error_main_img fl">
-                                <img src="imgs/404.png" width="85" height="144">
+                                <img th:src="@{/imgs/404.png}" width="85" height="144">
                             </div>
                             <div class="error_main_tx fr">
                                 <h1>404</h1>

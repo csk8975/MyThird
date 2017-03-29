@@ -11,7 +11,7 @@
         <!--/*/ <th:block th:include="template/exceptiontemplate :: bodypart"></th:block> /*/-->
         <div class="content-wrapper">
             <ol class="breadcrumb">
-                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a href="main">首页</a></li>
+                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a th:href="@{/main}">首页</a></li>
                 <li class="active">权限不足</li>
             </ol>
             <section class="main-content animated fadeInRight">
@@ -19,7 +19,7 @@
             <!-- Content Start-->
                 <div class="error_page">
                  <div class="error_main">
-                  <div class="error_main_img fl"><img src="imgs/404.png" width="85" height="144"></div>
+                  <div class="error_main_img fl"><img th:src="@{/imgs/404.png}" width="85" height="144"></div>
                  <div class="error_main_tx fr"><h1>无权限访问</h1>
                  <p>页面请求连接超时！！</p> 请尝试刷新或报告管理员！
                 </div>

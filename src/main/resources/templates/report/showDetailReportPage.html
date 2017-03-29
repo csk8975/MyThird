@@ -7,9 +7,9 @@
     content="target-densitydpi=device-dpi, width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="renderer" content="webkit" />
 <title>天河区开展第三方消防设施检测危险源分析报告(详情)</title>
-<link href="css/base_report.css" rel="stylesheet" type="text/css" />
-<link href="css/style_report.css" rel="stylesheet" type="text/css" />
-<script src="js/jquery/jquery.min.js"></script>
+<link th:href="@{/css/base_report.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/style_report.css}" rel="stylesheet" type="text/css" />
+<script th:src="@{/js/jquery/jquery.min.js}"></script>
 </head>
 
 <body>
@@ -68,6 +68,6 @@
         </div>
     </article>
     <!-- <div class="watermark"></div> -->
-    <script src="js/report/showDetailReportPage.js"></script>
+    <script th:src="@{/js/report/showDetailReportPage.js}"></script>
 </body>
 </html>

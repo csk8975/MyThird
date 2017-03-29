@@ -39,6 +39,7 @@ import com.detection.services.impl.CheckReportServiceImpl;
  *
  * @author lcc (lincc@ggkbigdata.com)
  * @version 1.0, 2017年2月22日 下午2:00:35
+ * 
  */
 @Controller
 public class ReportViewController {
@@ -49,12 +50,12 @@ public class ReportViewController {
     @Autowired
     private AuthenticationService authService;
 
-    @RequestMapping({ "/","/loginPage" })
+    @RequestMapping(value = { "/","/loginPage" }, method = RequestMethod.GET)
     public String index() {
         return "login";
     }
 
-    @RequestMapping({ "/main" })
+    @RequestMapping(value = { "/main" }, method = RequestMethod.GET)
     public String main( HttpServletRequest request ) {
         String result = "report/main";
         int permittedRole = 1;
@@ -67,7 +68,7 @@ public class ReportViewController {
         return result;
     }
 
-    @PostMapping("/uploadReport")
+    @RequestMapping(value ="/uploadReport", method = RequestMethod.POST)
     public String uploadReport(@RequestParam("file") MultipartFile file ,HttpServletRequest request) throws Exception {
         String result = "redirect:main";
         int permittedRole = 1;
@@ -78,7 +79,7 @@ public class ReportViewController {
             result ="redirect:nopermissions";
         }
         else if (!file.isEmpty()) {
-            checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file);
+            checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file, authService.getUserRealName(request));
         }
         return result;
     }
@@ -95,12 +96,12 @@ public class ReportViewController {
         }
     }*/
 
-    @RequestMapping("/getReportPage")
+    @RequestMapping(value = "/getReportPage", method = RequestMethod.GET)
     public String getReport() {
         return "report/getReportPage";
     }
 
-    @RequestMapping("/showAbstractReportPage")
+    @RequestMapping(value = "/showAbstractReportPage", method = RequestMethod.GET)
     public String reportAbstract(HttpServletRequest request) {
         String result = "report/showAbstractReportPage";
         int permittedRole = 1;

@@ -7,7 +7,7 @@
         <!--/*/ <th:block th:include="template/template :: bodypart"></th:block> /*/-->
         <div class="content-wrapper">
             <ol class="breadcrumb">
-                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a href="main">首页</a></li>
+                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a th:href="@{/main}">首页</a></li>
                 <li class="active">检测报告主页面</li>
             </ol>
             <section class="main-content animated fadeInRight">
@@ -17,13 +17,13 @@
                         <div class="title">
                             <h1>检测报告</h1>
                             <div class="toolbar fr">
-                                <!-- <a class="btn btn-default btn-batchdelete" href="javascript:;">
+                                <!-- <a class="btn btn-default btn-batchdelete" th:href="@{javascript:;}">
                                     <i class="iconfont icon-trash fl mr5"></i>批量删除
                                 </a> 
-                                <a class="btn btn-default btn-export" href="javascript:;">
+                                <a class="btn btn-default btn-export" th:href="@{javascript:;}">
                                     <i class="iconfont icon-export fl mr5"></i>导出报告
                                 </a> -->
-                                <a class="btn btn-default btn-import" href="javascript:;">
+                                <a class="btn btn-default btn-import" th:href="@{javascript:;}">
                                     <i class="iconfont icon-import fl mr5"></i>导入
                                 </a>
                             </div>
@@ -49,7 +49,7 @@
                 </div>
             </section>
             <form id="import-dialog" enctype="multipart/form-data"
-                action="uploadReport" method="post" class="dialog">
+                th:action="@{/uploadReport}" method="post" class="dialog">
                 <div class="form-group">
                     <input type="file" id="inputfile" name="file">
                 </div>
@@ -57,6 +57,6 @@
         </div>
     </div>
     <!--/*/ <th:block th:include="template/template :: footerpart"></th:block> /*/-->
-    <script src="js/report/main.js"></script>
+    <script th:src="@{/js/report/main.js}"></script>
 </body>
 </html>

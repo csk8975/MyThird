@@ -209,13 +209,13 @@ function Close(){
 <body>
 	<div id="main">
 		<h1 style="text-align: center; line-height: 50px;">
-			<img src="imgs/ok.png" width="48" height="48" /><br />
+			<img th:src="@{/imgs/ok.png}" width="48" height="48" /><br />
 			您已登记成功，待管理员确认信息后<br/>
 			将发送相关文件到指定邮箱。<br />
 			请稍后查收。
 		</h1>
 		<p style="text-align: center; margin-top: 20px;">
-			<a href="#" onclick="Close()">关闭窗口</a>
+			<a th:href="@{#}" onclick="Close()">关闭窗口</a>
 		</p>
 	</div>
 </body>

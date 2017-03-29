@@ -88,7 +88,7 @@ public class UserControlServiceImpl implements UserControlService {
         String message = "Fail.Unknown Reason";
         if (!userName.equals("") && userName != null && !userPassword.equals("") && userPassword != null
                 && !role.equals("") && role != null) {
-            if (userRepository.findOne(userName) != null) {
+            if (userRepository.findByUserName(userName) != null) {
                 code = 201;
                 message = "User Already Exist! Try other Name.";
             } else {
@@ -123,7 +123,7 @@ public class UserControlServiceImpl implements UserControlService {
         int code = 201;
         int role = 0;
         
-        User currentUser = userRepository.findOne(loginName);
+        User currentUser = userRepository.findByUserName(loginName);
         if (currentUser != null && currentUser.getUserPassword().equalsIgnoreCase(userPassword)) {
             code = 200;
             role = currentUser.getRole();
@@ -154,7 +154,7 @@ public class UserControlServiceImpl implements UserControlService {
         JSONObject result = new JSONObject();
         int code = 201;
         String message = "Fail.";
-        User currentUser = userRepository.findOne(userName);
+        User currentUser = userRepository.findByUserName(userName);
         // TODO Auto-generated method stub
         if (currentUser != null){
             

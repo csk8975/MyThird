@@ -6,6 +6,8 @@ import javax.mail.internet.AddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSONObject;
@@ -17,7 +19,7 @@ public class DepartmentController {
     @Autowired
     private OwnerUnitService ownerUnitService;
 
-    @GetMapping(value = "/addOwnerUnit")
+    @RequestMapping(value = "/addOwnerUnit", method = RequestMethod.GET)
     public String addOwnerUnit(@RequestParam String ownerName, @RequestParam String dutyTel,
             @RequestParam String dutyPerson, @RequestParam String email) throws AddressException, MessagingException {
         
@@ -28,17 +30,17 @@ public class DepartmentController {
         return "redirect:fail";
     }
     
-    @GetMapping(value = "/regist")
+    @RequestMapping(value = "/regist", method = RequestMethod.GET)
     public String regist(){
         return "registration/regist";
     }
     
-    @GetMapping(value = "/finish")
+    @RequestMapping(value = "/finish", method = RequestMethod.GET)
     public String finish(){
         return "registration/finish";
     }
     
-    @GetMapping(value = "/fail")
+    @RequestMapping(value = "/fail", method = RequestMethod.GET)
     public String fail(){
         return "registration/fail";
     }

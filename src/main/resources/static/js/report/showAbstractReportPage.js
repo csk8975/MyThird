@@ -21,7 +21,7 @@ $(function() {
                 var day = date.getDate();
                 $('.reportNum').html(result.reportNum);
                 $('#detectDate').html(result.reportDate);
-                $('#projectName').html(result.projectName);
+                $('#projectName').html(result.projectName+": ");
                 $('#checkbox_a' + result.riskLevel).attr("checked", true);
                 $('#publishData').html(year + '-' + month + '-' + day);
             }

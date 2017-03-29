@@ -5,36 +5,36 @@
 <meta http-equiv="X-UA-Compatible" content="IE=Edge, chorme=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>建筑消防风险评估系统</title>
-<link rel="icon" type="image/x-icon" href="imgs/favicon.ico" />
-<link rel="shortcut icon" type="image/x-icon" href="imgs/favicon.ico" />
-<link rel="bookmark" type="image/x-icon" href="imgs/favicon.ico" />
+<link rel="icon" type="image/x-icon" th:href="@{/imgs/favicon.ico}" />
+<link rel="shortcut icon" type="image/x-icon" th:href="@{/imgs/favicon.ico}" />
+<link rel="bookmark" type="image/x-icon" th:href="@{/imgs/favicon.ico}" />
 
 <!-- Bootstrap 3.3.7 -->
-<link href="common/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+<link th:href="@{/common/bootstrap/css/bootstrap.min.css}" rel="stylesheet"
     type="text/css" />
 <!-- iconfont -->
-<link href="common/iconfont/iconfont.css" rel="stylesheet"
+<link th:href="@{/common/iconfont/iconfont.css}" rel="stylesheet"
     type="text/css" />
 <!-- mCustomScrollbar -->
 <link
-    href="common/mCustomScrollbar/css/jquery.mCustomScrollbar.custom.css"
+    th:href="@{/common/mCustomScrollbar/css/jquery.mCustomScrollbar.custom.css}"
     rel="stylesheet" type="text/css" />
 <!-- animate css -->
-<link href="css/animate.css" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/animate.css}" rel="stylesheet" type="text/css" />
 <!-- base css -->
-<link href="css/base.css" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/base.css}" rel="stylesheet" type="text/css" />
 <!-- master css -->
-<link href="css/layout.css" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/layout.css}" rel="stylesheet" type="text/css" />
 <!-- custom css-->
-<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
 <!-- dialog custom css -->
-<link href="css/dialog/dialog.custom.css" rel="stylesheet"
+<link th:href="@{/css/dialog/dialog.custom.css}" rel="stylesheet"
     type="text/css" />
 
 <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
 <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<script th:src="@{/https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+<script th:src="@{/https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
 <![endif]-->
 
 </head>
@@ -43,7 +43,7 @@
         <div class="login-wrapper">
             <div class="loginBox animated fadeInDown">
                 <div class="login-logo mb20">
-                    <img src="imgs/login-logo.png" />
+                    <img th:src="@{/imgs/login-logo.png}" />
                 </div>
                 <div class="login-content">
                     <form role="form" action="/uploadReport">
@@ -69,25 +69,25 @@
     </div>
 
     <!-- JQuery 1.11.3 -->
-    <script src="common/jquery/jquery-1.11.3.min.js"></script>
+    <script th:src="@{/common/jquery/jquery-1.11.3.min.js}"></script>
     <!--[if lt IE 9]>
-<script src="common/jquery/jquery.pseudo.js"></script>
+<script th:src="@{/common/jquery/jquery.pseudo.js}"></script>
 <![endif]-->
     <!-- Bootstrap 3.3.7 -->
-    <script src="common/bootstrap/js/bootstrap.js"></script>
+    <script th:src="@{/common/bootstrap/js/bootstrap.js}"></script>
     <!-- mCustomScrollbar -->
     <script
-        src="common/mCustomScrollbar/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        th:src="@{/common/mCustomScrollbar/js/jquery.mCustomScrollbar.concat.min.js}"></script>
     <!-- My97DatePicker -->
-    <script src="common/My97DatePicker/WdatePicker.js"></script>
+    <script th:src="@{/common/My97DatePicker/WdatePicker.js}"></script>
     <!-- layer v2.0 -->
-    <script src="common/layer/layer.js"></script>
+    <script th:src="@{/common/layer/layer.js}"></script>
     <!-- 表单验证 validate -->
-    <script src="common/validate/jquery.validate.min.js"></script>
-    <script src="common/validate/messages_cn.js"></script>
+    <script th:src="@{/common/validate/jquery.validate.min.js}"></script>
+    <script th:src="@{/common/validate/messages_cn.js}"></script>
     <!-- dialog -->
-    <script src="js/dialog.js"></script>
+    <script th:src="@{/js/dialog.js}"></script>
     <!-- custom -->
-    <script src="js/normal.custom.js"></script>
+    <script th:src="@{/js/normal.custom.js}"></script>
 </body>
 </html>

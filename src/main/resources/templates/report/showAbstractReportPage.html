@@ -9,12 +9,12 @@
 <title>天河区第三方消防设施检测危险源分析报告</title>
 
 <!-- iconfont -->
-<link href="css/iconfont/iconfont.css" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 <!-- base css -->
-<link href="css/base_report.css" rel="stylesheet" type="text/css" />
-<link href="css/style_report.css" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/base_report.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/style_report.css}" rel="stylesheet" type="text/css" />
 <!-- JQuery 1.11.3 -->
-<script src="common/jquery/jquery-1.11.3.min.js"></script>
+<script th:src="@{/common/jquery/jquery-1.11.3.min.js}"></script>
 </head>
 
 <body>
@@ -56,8 +56,9 @@
 
             </div>
             <p>
-                详情请关注微信公众号“天河防火墙GZ”，或扫下方二维码，获取更多信息。回复“危险等级分析”，输入“<span
-                    class="reportNum"></span>”查看消防设施检测危险源分析报告。
+                更多详情请关注微信公众号“天河防火墙GZ”，或扫下方二维码，获取更多信息。</p>
+                <p>公众号内回复“危险等级分析”，在打开页面输入提取码：“<u><strong class="reportNum"></strong></u>
+                ”及责任人手机查看消防设施检测危险源分析报告。
             </p>
             <div class="bottom">
                 <div class="signature">
@@ -66,11 +67,11 @@
                     <p class="tr" id="publishData"></p>
                 </div>
                 <div class="QRcode">
-                    <img src="css/imgs/QRcode.jpg" />
+                    <img th:src="@{/css/imgs/QRcode.jpg}" />
                 </div>
             </div>
         </section>
     </article>
-    <script src="js/report/showAbstractReportPage.js"></script>
+    <script th:src="@{/js/report/showAbstractReportPage.js}"></script>
 </body>
 </html>
