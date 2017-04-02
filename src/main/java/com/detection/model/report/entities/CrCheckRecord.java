@@ -14,7 +14,7 @@ import javax.persistence.Id;
  * @function
  */
 @Entity
-public class CheckRecord {
+public class CrCheckRecord {
     @Id
     @GeneratedValue
     private int id;
@@ -23,7 +23,7 @@ public class CheckRecord {
     
     private Date recordDate;
     
-    public CheckRecord(){
+    public CrCheckRecord(){
         
     }
 

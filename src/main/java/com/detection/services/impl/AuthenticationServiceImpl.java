@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.detection.model.user.User;
+import com.detection.model.user.CrUser;
 import com.detection.model.user.UserRepository;
 import com.detection.services.AuthenticationService;
 
@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = (String) session.getAttribute("token");
         int role = Integer.parseInt((String) session.getAttribute("role"));
         if (userName != null && token != null) {
-            User user = userRepo.findByUserName(userName);
+            CrUser user = userRepo.findByUserName(userName);
             if (user != null && isTokenValid(user,token)
                     && role == permittedRole) {
                 result = true;
@@ -44,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean isTokenValid(User user, String token) {
+    public boolean isTokenValid(CrUser user, String token) {
         // TODO Auto-generated method stub
         boolean result = false;
         if(user.getToken().equalsIgnoreCase(token)){
@@ -65,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String userName = (String) session.getAttribute("userName");
         String token = (String) session.getAttribute("token");
         if (userName != null && token != null ) {
-            User user = userRepo.findByUserName(userName);
+            CrUser user = userRepo.findByUserName(userName);
             if (user != null && isTokenValid(user,token)) {
                 result = true;
             }
@@ -79,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String result = null;
         String userName = (String)request.getSession().getAttribute("userName");
         if(userName!=null && !userName.equals("")){
-            User user = userRepo.findByUserName(userName);
+            CrUser user = userRepo.findByUserName(userName);
             if(user!=null){
                 result = user.getRealName();
             }

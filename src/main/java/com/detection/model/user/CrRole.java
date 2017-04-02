@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Role {
+public class CrRole {
 	
 	@Id
 	@GeneratedValue
@@ -14,7 +14,7 @@ public class Role {
 	private String roleName;
 	private int userId;
 	
-	public Role(){
+	public CrRole(){
 		
 	}
 	public int getId() {

@@ -2,7 +2,7 @@ package com.detection.model.report.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.detection.model.report.entities.CheckReportInfo;
+import com.detection.model.report.entities.CrCheckReportInfo;
 
 /**
  * @fileName CheckReportInfoRepository.java
@@ -12,6 +12,6 @@ import com.detection.model.report.entities.CheckReportInfo;
  * @function
  */
 
-public interface CheckReportInfoRepository extends JpaRepository<CheckReportInfo, String> {
+public interface CheckReportInfoRepository extends JpaRepository<CrCheckReportInfo, String> {
     
 }

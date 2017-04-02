@@ -41,8 +41,8 @@ $(function() {
                                             + '<a class="evaluateReport" target="_blank" href="showAbstractReportPage?reportNum='
                                             + result.data[d].reportNum
                                             + '">分析报告</a>;'
-                                            + '<a class="detectionReport" target="_blank" href="'
-                                            + result.data[d].filePath
+                                            + '<a class="detectionReport" target="_blank" href="fetchReport/'
+                                            + result.data[d].reportNum
                                             + '">检测报告</a>;'
                                             + '<a class="deleteReport" " href="JavaScript: " onclick="deleteReportByReportNum(\''
                                             + result.data[d].reportNum

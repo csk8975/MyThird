@@ -1,41 +1,46 @@
 /*
- * File Name：CheckReportResultStat.java
+ * File Name：CheckItemDetail.java
  *
  * Copyrighe：copyright@2017 www.ggkbigdata.com. All Rights Reserved
  *
- * Create Time: 2017年2月21日 下午5:42:28
+ * Create Time: 2017年2月22日 上午10:33:18
  */
 package com.detection.model.report.entities;
 
-import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 /**
  *
  * @author lcc (lincc@ggkbigdata.com)
- * @version 1.0, 2017年2月21日 下午5:42:28
- * @function 单项评定结果
+ * @version 1.0, 2017年2月22日 上午10:33:18
+ * @function 检测情况统计
  */
-
 @Entity
-public class CheckReportResultStat {
-    
+public class CrCheckItemDetail {
+
     @Id
     @GeneratedValue
     private int id;
-    //private String reportNum;
+    // private String reportNum;
     private String itemCode;
-    private String itemName;
-    private int checkNum;
     private String importantGrade;
+    private String itemName;
+
+    private int checkNum;
     private int unqualifiedNum;
-    private Date optTime;
-    
-    public CheckReportResultStat(){
-    	
+
+    private String regular;
+
+    public CrCheckItemDetail() {
+
     }
 
     public int getId() {
@@ -54,6 +59,14 @@ public class CheckReportResultStat {
         this.itemCode = itemCode;
     }
 
+    public String getImportantGrade() {
+        return importantGrade;
+    }
+
+    public void setImportantGrade(String importantGrade) {
+        this.importantGrade = importantGrade;
+    }
+
     public String getItemName() {
         return itemName;
     }
@@ -70,14 +83,6 @@ public class CheckReportResultStat {
         this.checkNum = checkNum;
     }
 
-    public String getImportantGrade() {
-        return importantGrade;
-    }
-
-    public void setImportantGrade(String importantGrade) {
-        this.importantGrade = importantGrade;
-    }
-
     public int getUnqualifiedNum() {
         return unqualifiedNum;
     }
@@ -86,15 +91,13 @@ public class CheckReportResultStat {
         this.unqualifiedNum = unqualifiedNum;
     }
 
-    public Date getOptTime() {
-        return optTime;
+    public String getRegular() {
+        return regular;
     }
 
-    public void setOptTime(Date optTime) {
-        this.optTime = optTime;
+    public void setRegular(String regular) {
+        this.regular = regular;
     }
-    
-    
+
 
 }
-

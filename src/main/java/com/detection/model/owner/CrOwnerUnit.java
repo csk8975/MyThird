@@ -13,10 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
-import com.detection.model.report.entities.CheckRecord;
+import com.detection.model.report.entities.CrCheckRecord;
 
 @Entity
-public class OwnerUnit {
+public class CrOwnerUnit {
 
     @Id
     private String dutyTel;
@@ -33,7 +33,7 @@ public class OwnerUnit {
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "dutyTel")
-    private List<CheckRecord> checkRecords = new ArrayList<CheckRecord>();
+    private List<CrCheckRecord> checkRecords = new ArrayList<CrCheckRecord>();
 
     private Date registTime;
     
@@ -41,7 +41,7 @@ public class OwnerUnit {
     
     private Date tokenTime;
 
-    public OwnerUnit() {
+    public CrOwnerUnit() {
         super();
     }
 
@@ -85,11 +85,11 @@ public class OwnerUnit {
         this.token = token;
     }
 
-    public List<CheckRecord> getCheckRecords() {
+    public List<CrCheckRecord> getCheckRecords() {
         return checkRecords;
     }
 
-    public void setCheckRecords(List<CheckRecord> checkRecords) {
+    public void setCheckRecords(List<CrCheckRecord> checkRecords) {
         this.checkRecords = checkRecords;
     }
 
@@ -125,7 +125,7 @@ public class OwnerUnit {
         this.authorizedReportNum = authorizedReportNum;
     }
 
-    public void addOneCheckRecord(CheckRecord item) {
+    public void addOneCheckRecord(CrCheckRecord item) {
         if (item != null) {
             this.checkRecords.add(item);
         }
@@ -133,7 +133,7 @@ public class OwnerUnit {
     
     public boolean hasRecord(String reportNum){
         boolean result = false;
-        Iterator<CheckRecord> it = checkRecords.iterator();
+        Iterator<CrCheckRecord> it = checkRecords.iterator();
         while(it.hasNext()){
             if(it.next().getReportNum().equals(reportNum)){
                 result = true;

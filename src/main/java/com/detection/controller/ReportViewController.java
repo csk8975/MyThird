@@ -7,23 +7,21 @@
  */
 package com.detection.controller;
 
-import java.io.BufferedOutputStream;
-
-import java.io.File;
-
-import java.io.FileNotFoundException;
-
-import java.io.FileOutputStream;
-
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +31,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSONObject;
 import com.detection.services.AuthenticationService;
 import com.detection.services.CheckReportService;
-import com.detection.services.impl.CheckReportServiceImpl;
 
 /**
  *
@@ -46,55 +43,69 @@ public class ReportViewController {
 
     @Autowired
     private CheckReportService checkReportService;
-    
+
     @Autowired
     private AuthenticationService authService;
 
-    @RequestMapping(value = { "/","/loginPage" }, method = RequestMethod.GET)
+    @Value("${uploadPath}")
+    private String uploadPath;
+
+    @RequestMapping(value = { "/", "/loginPage" }, method = RequestMethod.GET)
     public String index() {
         return "login";
     }
 
     @RequestMapping(value = { "/main" }, method = RequestMethod.GET)
-    public String main( HttpServletRequest request ) {
+    public String main(HttpServletRequest request) {
         String result = "report/main";
         int permittedRole = 1;
-        if(!authService.isLoggedin(request)){
+        if (!authService.isLoggedin(request)) {
             result = "redirect:/";
-        }
-        else if(!authService.isPermitted(request, permittedRole)){
-            result ="redirect:nopermissions";
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
         }
         return result;
     }
 
-    @RequestMapping(value ="/uploadReport", method = RequestMethod.POST)
-    public String uploadReport(@RequestParam("file") MultipartFile file ,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
+    public String uploadReport(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
         String result = "redirect:main";
         int permittedRole = 1;
-        if(!authService.isLoggedin(request)){
+        if (!authService.isLoggedin(request)) {
             result = "redirect:/";
-        }
-        else if(!authService.isPermitted(request, permittedRole)){
-            result ="redirect:nopermissions";
-        }
-        else if (!file.isEmpty()) {
-            checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file, authService.getUserRealName(request));
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
+        } else if (!file.isEmpty()) {
+            String ctxPath = request.getSession().getServletContext().getRealPath("");
+            checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file,
+                    authService.getUserRealName(request), ctxPath);
         }
         return result;
     }
 
-/*    @RequestMapping(value = {"/fetchReport/{fetchCode}"}, method = RequestMethod.GET)
-    public String fetchReportFile(@PathVariable("fetchCode") String fetchCode){
-        JSONObject result = checkReportService.getReportPath(fetchCode);
+    @RequestMapping(value = { "/fetchReport/{reportNum}" }, method = RequestMethod.GET)
+    public ResponseEntity<InputStreamResource> fetchReportFile(@PathVariable("reportNum") String reportNum,
+            HttpServletResponse response) throws IOException {
+
+        HttpHeaders headers = new HttpHeaders();
+        String filePath = checkReportService.getReportURL(reportNum);
+        if (filePath != null && !filePath.equals("")) {
+            FileSystemResource file = new FileSystemResource(filePath);
+            if(file.exists()){
+            headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+            headers.add("Content-Disposition", String.format("inline; filename=\"%s\"",
+                    URLEncoder.encode(checkReportService.getOriginalName(reportNum), "UTF-8")));
+            headers.add("Pragma", "no-cache");
+            headers.add("Expires", "0");
+
+            return ResponseEntity.ok().headers(headers).contentLength(file.contentLength())
+                    .contentType(MediaType.parseMediaType("application/pdf"))
+                    .body(new InputStreamResource(file.getInputStream()));
+            }
+        }
         
-        if(result!=null){
-            return "";
-        }
-        else{
-            return "redirect:404";
-        }
-    }*/
+        return ResponseEntity.notFound().headers(headers).build();
+    }
 
     @RequestMapping(value = "/getReportPage", method = RequestMethod.GET)
     public String getReport() {
@@ -105,26 +116,23 @@ public class ReportViewController {
     public String reportAbstract(HttpServletRequest request) {
         String result = "report/showAbstractReportPage";
         int permittedRole = 1;
-        if(!authService.isLoggedin(request)){
+        if (!authService.isLoggedin(request)) {
             result = "redirect:/";
-        }
-        else if(!authService.isPermitted(request, permittedRole)){
-            result ="redirect:nopermissions";
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
         }
         return result;
     }
-    
-    @RequestMapping(value = {"/deleteReportByReportNum"} , method = RequestMethod.GET)
-    public String deleteReportByReportNum(@RequestParam String reportNum, HttpServletRequest request){
+
+    @RequestMapping(value = { "/deleteReportByReportNum" }, method = RequestMethod.GET)
+    public String deleteReportByReportNum(@RequestParam String reportNum, HttpServletRequest request) {
         String result = "redirect:main";
         int permittedRole = 1;
-        if(!authService.isLoggedin(request)){
+        if (!authService.isLoggedin(request)) {
             result = "redirect:/";
-        }
-        else if(!authService.isPermitted(request, permittedRole)){
-            result ="redirect:nopermissions";
-        }
-        else if (reportNum != null) {
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
+        } else if (reportNum != null) {
             checkReportService.deleteReportByReportNum(reportNum);
         }
         return result;
@@ -138,7 +146,7 @@ public class ReportViewController {
         return mv;
     }
 
-    @RequestMapping({"/404"})
+    @RequestMapping({ "/404" })
     public String pageNotFound() {
         return "errors/404";
     }

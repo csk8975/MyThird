@@ -17,7 +17,7 @@ import javax.persistence.Id;
  * @function 评分模型用类
  */
 @Entity
-public class ReportItem {
+public class CrReportItem {
     @Id
     private String reportNum;
     private String checkLevel;
@@ -25,7 +25,7 @@ public class ReportItem {
     private int unqualifiedNum;
     private double ratio;
     
-    public ReportItem() {
+    public CrReportItem() {
         super();
         // TODO Auto-generated constructor stub
     }

@@ -50,6 +50,7 @@ public class PDFParserServiceImpl implements PDFParserService {
         stripper.setStartPage(1);
         stripper.setEndPage(lastPage);
         String allText = stripper.getText(pdfDocument);
+        pdfDocument.close();
         int sIndex = 0;
         int eIndex = 0;
         {

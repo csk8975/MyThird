@@ -28,36 +28,38 @@ import javax.persistence.OneToOne;
  */
 
 @Entity
-public class CheckReport {
+public class CrCheckReport {
 
     @Id
     private String reportNum;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reportNum")
-    private CheckReportInfo checkReportInfo;
+    private CrCheckReportInfo checkReportInfo;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reportNum")
-    private List<CheckReportResultStat> checkReportResultStat = new ArrayList<CheckReportResultStat>();
+    private List<CrCheckReportResultStat> checkReportResultStat = new ArrayList<CrCheckReportResultStat>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reportNum")
-    private List<CheckItemDetail> checkItemDetail = new ArrayList<CheckItemDetail>();
+    private List<CrCheckItemDetail> checkItemDetail = new ArrayList<CrCheckItemDetail>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reportNum")
-    private List<CheckReportUnqualifiedItemDetail> unqualifiedItemDetail = new ArrayList<CheckReportUnqualifiedItemDetail>();
+    private List<CrCheckReportUnqualifiedItemDetail> unqualifiedItemDetail = new ArrayList<CrCheckReportUnqualifiedItemDetail>();
 
     private Date createDate;
     private Date modifyDate;
     private String creatorName;
     private String modifierName;
-    
+    private String filePath;
+    private String fileName;
+    private String originalName;
     private String verifyToken;
     private String fetchCode;
 
-    public CheckReport() {
+    public CrCheckReport() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -70,35 +72,35 @@ public class CheckReport {
         this.reportNum = reportNum;
     }
 
-    public CheckReportInfo getCheckReportInfo() {
+    public CrCheckReportInfo getCheckReportInfo() {
         return checkReportInfo;
     }
 
-    public void setCheckReportInfo(CheckReportInfo checkReportInfo) {
+    public void setCheckReportInfo(CrCheckReportInfo checkReportInfo) {
         this.checkReportInfo = checkReportInfo;
     }
 
-    public List<CheckReportResultStat> getCheckReportResultStat() {
+    public List<CrCheckReportResultStat> getCheckReportResultStat() {
         return checkReportResultStat;
     }
 
-    public void setCheckReportResultStat(List<CheckReportResultStat> checkReportResultStat) {
+    public void setCheckReportResultStat(List<CrCheckReportResultStat> checkReportResultStat) {
         this.checkReportResultStat = checkReportResultStat;
     }
 
-    public List<CheckItemDetail> getCheckItemDetail() {
+    public List<CrCheckItemDetail> getCheckItemDetail() {
         return checkItemDetail;
     }
 
-    public void setCheckItemDetail(List<CheckItemDetail> checkItemDetail) {
+    public void setCheckItemDetail(List<CrCheckItemDetail> checkItemDetail) {
         this.checkItemDetail = checkItemDetail;
     }
 
-    public List<CheckReportUnqualifiedItemDetail> getUnqualifiedItemDetail() {
+    public List<CrCheckReportUnqualifiedItemDetail> getUnqualifiedItemDetail() {
         return unqualifiedItemDetail;
     }
 
-    public void setUnqualifiedItemDetail(List<CheckReportUnqualifiedItemDetail> unqualifiedItemDetail) {
+    public void setUnqualifiedItemDetail(List<CrCheckReportUnqualifiedItemDetail> unqualifiedItemDetail) {
         this.unqualifiedItemDetail = unqualifiedItemDetail;
     }
 
@@ -132,6 +134,30 @@ public class CheckReport {
 
     public void setModifierName(String modifierName) {
         this.modifierName = modifierName;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
     }
 
     public String getVerifyToken() {

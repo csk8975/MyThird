@@ -13,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
-public class CheckReportUnqualifiedItemDetail {
+public class CrCheckReportUnqualifiedItemDetail {
 
     @Id
     @GeneratedValue
@@ -24,10 +24,10 @@ public class CheckReportUnqualifiedItemDetail {
     //private String itemCode;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "unqualified_id")
-    private List<UnqualifiedCheckPoint> unqualifiedCheckPoint = new ArrayList<UnqualifiedCheckPoint>() ;
+    private List<CrUnqualifiedCheckPoint> unqualifiedCheckPoint = new ArrayList<CrUnqualifiedCheckPoint>() ;
     
     
-    public CheckReportUnqualifiedItemDetail(){
+    public CrCheckReportUnqualifiedItemDetail(){
         
     }
 
@@ -72,20 +72,20 @@ public class CheckReportUnqualifiedItemDetail {
     }
 
 
-    public List<UnqualifiedCheckPoint> getUnqualifiedCheckPoint() {
+    public List<CrUnqualifiedCheckPoint> getUnqualifiedCheckPoint() {
         return unqualifiedCheckPoint;
     }
 
 
-    public void setUnqualifiedCheckPoint(List<UnqualifiedCheckPoint> unqualifiedCheckPoint) {
+    public void setUnqualifiedCheckPoint(List<CrUnqualifiedCheckPoint> unqualifiedCheckPoint) {
         this.unqualifiedCheckPoint = unqualifiedCheckPoint;
     }
     
     public void setUnqualifiedCheckPointByStringList(List<String> unqualifiedCheckPointStringList){
-        List<UnqualifiedCheckPoint> unqualifiedCheckPoints = new ArrayList<UnqualifiedCheckPoint>();
+        List<CrUnqualifiedCheckPoint> unqualifiedCheckPoints = new ArrayList<CrUnqualifiedCheckPoint>();
         Iterator<String> it = unqualifiedCheckPointStringList.iterator();
         while(it.hasNext()){
-            UnqualifiedCheckPoint point = new UnqualifiedCheckPoint();
+            CrUnqualifiedCheckPoint point = new CrUnqualifiedCheckPoint();
             point.setCheckPoint(it.next());
             unqualifiedCheckPoints.add(point);
         }

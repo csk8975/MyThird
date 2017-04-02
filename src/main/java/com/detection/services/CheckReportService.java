@@ -7,6 +7,7 @@
  */
 package com.detection.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.detection.model.report.entities.CheckReport;
+import com.detection.model.report.entities.CrCheckReport;
 
 /**
  *
@@ -34,7 +35,7 @@ public interface CheckReportService {
      * @throws Exception 
      * @function 上传报告文件，解析并保存到数据库
      */
-    public boolean uploadAndSaveReport(String path, MultipartFile file, String operatorName) throws IOException, Exception;
+    public boolean uploadAndSaveReport(String path, MultipartFile file, String operatorName,String ctxPath) throws IOException, Exception;
     
     /**
      * @author csk
@@ -42,7 +43,7 @@ public interface CheckReportService {
      * @throws IOException 
      * @function 解析文件并保存到数据库
      */
-    public boolean parseAndSaveReportToDB(String upFilePath, String downloadPath,String operatorName) throws IOException;
+    public boolean parseAndSaveReportToDB(String upFilePath, String fileName,String encryptedFileName, String operatorName) throws IOException;
     
     /**
      * @author csk
@@ -100,12 +101,16 @@ public interface CheckReportService {
     /**
      * @author csk
      * @version 1.0
-     * @function 获取文件路径
+     * @function 获取pdf文件
      */
-    public JSONObject getReportPath(String fetchCode);
+    public JSONObject getReportFile(String fileName);
     
     public boolean updateRiskLevel(String reportNum);
     
     public void updateAllRiskLevel();
+
+    public String getReportURL(String reportNum);
+
+    public String getOriginalName(String reportNum);
 }
 

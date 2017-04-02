@@ -19,25 +19,28 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.juli.FileHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.propertyeditors.FileEditor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.detection.config.LevelWeightProperties;
 import com.detection.config.RiskLevelBoundary;
-import com.detection.model.owner.OwnerUnit;
+import com.detection.model.owner.CrOwnerUnit;
 import com.detection.model.owner.OwnerUnitRepository;
 import com.detection.model.pdfparse.Cover;
 import com.detection.model.pdfparse.ListResult;
 import com.detection.model.pdfparse.PDFParserResult;
 import com.detection.model.pdfparse.Result;
-import com.detection.model.report.entities.CheckItemDetail;
-import com.detection.model.report.entities.CheckReport;
-import com.detection.model.report.entities.CheckReportInfo;
-import com.detection.model.report.entities.CheckReportResultStat;
-import com.detection.model.report.entities.CheckReportUnqualifiedItemDetail;
+import com.detection.model.report.entities.CrCheckItemDetail;
+import com.detection.model.report.entities.CrCheckReport;
+import com.detection.model.report.entities.CrCheckReportInfo;
+import com.detection.model.report.entities.CrCheckReportResultStat;
+import com.detection.model.report.entities.CrCheckReportUnqualifiedItemDetail;
+import com.detection.model.report.repositories.CheckReportInfoRepository;
 import com.detection.model.report.repositories.CheckReportRepository;
 import com.detection.services.CheckReportService;
 import com.detection.services.PDFParserService;
@@ -63,9 +66,6 @@ public class CheckReportServiceImpl implements CheckReportService {
     @Value("${uploadPath}")
     private String uploadPath;
 
-    @Value("${downloadPath}")
-    private String downloadPath;
-    
     @Value("${detectionLevelPrefix}")
     private String detectionLevelPrefix;
     
@@ -73,13 +73,13 @@ public class CheckReportServiceImpl implements CheckReportService {
     private boolean isDebug;
 
     @Override
-    public boolean uploadAndSaveReport(String fileName, MultipartFile file, String operatorName) throws Exception {
+    public boolean uploadAndSaveReport(String fileName, MultipartFile file, String operatorName, String ctxPath) throws Exception {
         boolean result = false;
-        fileName = EncryptionHelper.encryptFileNameByMD5(fileName);
-        String upFilePath = uploadPath + fileName;
-        String downFilePath = downloadPath + fileName;
+        String encryptedFileName = EncryptionHelper.encryptStringByMD5(fileName);
+        String upFilePath = ctxPath+ uploadPath + encryptedFileName;
+        //String downFilePath = downloadPath + fileName;
 
-        File outPath = new File(uploadPath);
+        File outPath = new File(ctxPath+uploadPath);
         if (!outPath.exists()) {
             outPath.mkdirs();
         }
@@ -100,16 +100,16 @@ public class CheckReportServiceImpl implements CheckReportService {
         out.write(file.getBytes());
         out.flush();
         //System.out.println("file length: "+upFile.length());
-        upFileOS.close();
+        //upFileOS.close();
         out.close();
-        parseAndSaveReportToDB(upFilePath, downFilePath,operatorName);
+        parseAndSaveReportToDB(upFilePath, fileName,encryptedFileName,operatorName);
         result = true;
 
         return result;
     }
 
     @Override
-    public boolean parseAndSaveReportToDB(String upFilePath, String downloadPath, String operatorName) throws IOException {
+    public boolean parseAndSaveReportToDB(String upFilePath, String fileName,String encryptedFileName, String operatorName) throws IOException {
 
         boolean result = false;
         // 解析报告并入库
@@ -121,10 +121,10 @@ public class CheckReportServiceImpl implements CheckReportService {
             else{
                 System.out.println("file can not read!");
             }
-        
             System.out.println("start parsing=====>>>>>>>>>>>");
         }
         PDFParserResult parseResult = pdfParser.parse(upFile);
+        
         //System.out.println("file length: "+upFile.length());
         Cover reportCover = parseResult.getCover();
         List<Result> firstPart = parseResult.getFirstPart();
@@ -132,18 +132,17 @@ public class CheckReportServiceImpl implements CheckReportService {
         List<Result> thirdPart = parseResult.getThirdPart();
         List<ListResult> forthPart = parseResult.getForthPart();
         // TODO delete old report
-        if (reportCover.getReportNum() != null) {
-            deleteReportByReportNum(reportCover.getReportNum());
-        }
-
         // 保存report对象
-        CheckReport checkReport = new CheckReport();
-        CheckReportInfo checkReportInfo = new CheckReportInfo();
-        List<CheckReportResultStat> checkReportStatList = new ArrayList<CheckReportResultStat>();
-        List<CheckItemDetail> checkItemDetailList = new ArrayList<CheckItemDetail>();
-        List<CheckReportUnqualifiedItemDetail> checkReportUnqualifiedItemList = new ArrayList<CheckReportUnqualifiedItemDetail>();
+        CrCheckReport checkReport = new CrCheckReport();
+        CrCheckReportInfo checkReportInfo = new CrCheckReportInfo();
+        List<CrCheckReportResultStat> checkReportStatList = new ArrayList<CrCheckReportResultStat>();
+        List<CrCheckItemDetail> checkItemDetailList = new ArrayList<CrCheckItemDetail>();
+        List<CrCheckReportUnqualifiedItemDetail> checkReportUnqualifiedItemList = new ArrayList<CrCheckReportUnqualifiedItemDetail>();
         // report basic info
         checkReport.setReportNum(reportCover.getReportNum());
+        checkReport.setFilePath(upFilePath);
+        checkReport.setFileName(encryptedFileName);
+        checkReport.setOriginalName(fileName);
         checkReport.setCreateDate(new Date());
         checkReport.setModifyDate(new Date());
 
@@ -158,14 +157,13 @@ public class CheckReportServiceImpl implements CheckReportService {
         checkReportInfo.setQaAddress(reportCover.getQaAddress());
         checkReportInfo.setQaName(reportCover.getQaName());
         checkReportInfo.setReportConclusion(reportCover.getReportConclusion());
-        checkReportInfo.setFilePath(downloadPath);
 
         // process on first part
         Iterator<Result> it1 = firstPart.iterator();
         Pattern digitsPattern = Pattern.compile("^\\d+$");
         //System.out.println("第一部分处理开始=====>>>>>>>>>>>");
         while (it1.hasNext()) {
-            CheckReportResultStat element = new CheckReportResultStat();
+            CrCheckReportResultStat element = new CrCheckReportResultStat();
             Result nextItem = it1.next();
             element.setImportantGrade(nextItem.getLevel());
             if(digitsPattern.matcher(nextItem.getValue1()).matches()){
@@ -186,7 +184,7 @@ public class CheckReportServiceImpl implements CheckReportService {
         Iterator<Result> it2 = thirdPart.iterator();
         //System.out.println("\n\n第三部分处理开始=====>>>>>>>>>>>");
         while (it2.hasNext()) {
-            CheckItemDetail element = new CheckItemDetail();
+            CrCheckItemDetail element = new CrCheckItemDetail();
             Result nextItem = it2.next();
             element.setImportantGrade(nextItem.getLevel());
             element.setItemCode(nextItem.getLabel());
@@ -208,7 +206,7 @@ public class CheckReportServiceImpl implements CheckReportService {
         Iterator<ListResult> it3 = forthPart.iterator();
         //System.out.println("\n\n第四部分处理开始=====>>>>>>>>>>>");
         while (it3.hasNext()) {
-            CheckReportUnqualifiedItemDetail element = new CheckReportUnqualifiedItemDetail();
+            CrCheckReportUnqualifiedItemDetail element = new CrCheckReportUnqualifiedItemDetail();
             ListResult nextItem = it3.next();
             element.setImportantGrade(nextItem.getImportantGrade());
             element.setRequirements(nextItem.getRequirements());
@@ -232,6 +230,8 @@ public class CheckReportServiceImpl implements CheckReportService {
         
         System.out.println("完成报告解析：\n风险评分: " +riskScore );
         System.out.println("报告号码："+reportCover.getReportNum());
+        
+        deleteReportByReportNum(reportCover.getReportNum());
         checkReportRepo.save(checkReport);
         result = true;
 
@@ -241,6 +241,11 @@ public class CheckReportServiceImpl implements CheckReportService {
     @Override
     public void deleteReportByReportNum(String reportNum) {
         if (checkReportRepo.findOne(reportNum) != null) {
+            String filePath = checkReportRepo.findFilePathByReportNum(reportNum);
+            File file = new File(filePath);
+            if(file.exists() && file.isFile()){
+                file.delete();
+            }
             checkReportRepo.delete(reportNum);
         }
     }
@@ -251,11 +256,21 @@ public class CheckReportServiceImpl implements CheckReportService {
         int code = 200;
         String message = "success";
 
-        List<CheckReport> reportlist = checkReportRepo.findAll();
-        List<CheckReportInfo> dataList = new ArrayList<CheckReportInfo>();
-        Iterator<CheckReport> it = reportlist.iterator();
+        List<CrCheckReport> reportlist = checkReportRepo.findAll();
+        List<JSONObject> dataList = new ArrayList<JSONObject>();
+        Iterator<CrCheckReport> it = reportlist.iterator();
         while (it.hasNext()) {
-            dataList.add(it.next().getCheckReportInfo());
+            CrCheckReport checkReport = it.next();
+            CrCheckReportInfo checkReportInfo = checkReport.getCheckReportInfo();
+            JSONObject item = new JSONObject();
+            item.put("reportNum", checkReportInfo.getReportNum());
+            item.put("projectName", checkReportInfo.getProjectName());
+            item.put("projectAddress", checkReportInfo.getProjectAddress());
+            item.put("riskLevel", checkReportInfo.getRiskLevel());
+            item.put("riskLevel", checkReportInfo.getRiskLevel());
+            item.put("qaName", checkReportInfo.getQaName());
+            item.put("contactTel", checkReportInfo.getContactTel());
+            dataList.add(item);
         }
         result.put("code", code);
         result.put("message", message);
@@ -268,7 +283,7 @@ public class CheckReportServiceImpl implements CheckReportService {
     public JSONObject getReportByCondition(String projectName, String reportNum, String riskLevel, String qaName) {
         // TODO Auto-generated method stub
         if (reportNum != null && !reportNum.equals("")) {
-            CheckReport result = checkReportRepo.findOne(reportNum);
+            CrCheckReport result = checkReportRepo.findOne(reportNum);
         }
         return null;
     }
@@ -283,7 +298,7 @@ public class CheckReportServiceImpl implements CheckReportService {
         String projectName = null;
         String riskLevel = null;
 
-        CheckReport report = checkReportRepo.findOne(reportNum);
+        CrCheckReport report = checkReportRepo.findOne(reportNum);
         if (report != null) {
             code = 200;
             message = "success";
@@ -325,17 +340,17 @@ public class CheckReportServiceImpl implements CheckReportService {
         String reportDate = null;
         String reportConclusion = null;
         String rectifyComments = null;
-        List<CheckReportUnqualifiedItemDetail> unqualifiedItemList = new ArrayList<CheckReportUnqualifiedItemDetail>();
+        List<CrCheckReportUnqualifiedItemDetail> unqualifiedItemList = new ArrayList<CrCheckReportUnqualifiedItemDetail>();
         String projectName = null;
         String dutyTel = null;
         String dutyPerson = null;
 
-        List<OwnerUnit> ownerUnits = ownerUnitRepo.findByToken(verifyToken);
+        List<CrOwnerUnit> ownerUnits = ownerUnitRepo.findByToken(verifyToken);
         if (ownerUnits != null && ownerUnits.size() == 1) {
-            OwnerUnit ownerUnit = ownerUnits.get(0);
-            CheckReport report = checkReportRepo.findOne(ownerUnit.getAuthorizedReportNum());
+            CrOwnerUnit ownerUnit = ownerUnits.get(0);
+            CrCheckReport report = checkReportRepo.findOne(ownerUnit.getAuthorizedReportNum());
             if (report != null) {
-                CheckReportInfo reportInfo = report.getCheckReportInfo();
+                CrCheckReportInfo reportInfo = report.getCheckReportInfo();
                 code = 200;
                 message = "success";
                 reportNum = report.getReportNum();
@@ -376,7 +391,7 @@ public class CheckReportServiceImpl implements CheckReportService {
         int code = 201;
         String message = "Fail. Unkonwn Owner Unit.";
         String token = null;
-        OwnerUnit ownerUnit = ownerUnitRepo.findOne(dutyTel);
+        CrOwnerUnit ownerUnit = ownerUnitRepo.findOne(dutyTel);
         if (ownerUnit != null) {
             if (ownerUnit.getDutyPerson().equals(dutyPerson) && ownerUnit.hasRecord(reportNum)) {
                 Date date = new Date();
@@ -400,11 +415,11 @@ public class CheckReportServiceImpl implements CheckReportService {
     }
 
     @Override
-    public JSONObject getReportPath(String fetchCode) {
+    public JSONObject getReportFile(String fileName) {
 
         // TODO Auto-generated method stub
         JSONObject result = new JSONObject();
-        List<CheckReport> reportList = checkReportRepo.findByFetchCode(fetchCode);
+        //List<CrCheckReport> reportList = checkReportRepo.findByFetchCode(fileName);
 
         return result;
     }
@@ -413,7 +428,7 @@ public class CheckReportServiceImpl implements CheckReportService {
     public boolean updateRiskLevel(String reportNum) {
         // TODO Auto-generated method stub
         boolean result = false;
-        CheckReport report = checkReportRepo.findOne(reportNum);
+        CrCheckReport report = checkReportRepo.findOne(reportNum);
         if (report != null) {
             float riskScore = computeRiskScore(report);
             String riskLevel = computRiskLevel(riskScore);
@@ -430,10 +445,10 @@ public class CheckReportServiceImpl implements CheckReportService {
     @Override
     public void updateAllRiskLevel() {
         // TODO Auto-generated method stub
-        List<CheckReport> reportList = checkReportRepo.findAll();
-        Iterator<CheckReport> it = reportList.iterator();
+        List<CrCheckReport> reportList = checkReportRepo.findAll();
+        Iterator<CrCheckReport> it = reportList.iterator();
         while (it.hasNext()) {
-            CheckReport report = it.next();
+            CrCheckReport report = it.next();
             float riskScore = computeRiskScore(report);
             String riskLevel = computRiskLevel(riskScore);
             if (riskLevel != null) {
@@ -461,20 +476,20 @@ public class CheckReportServiceImpl implements CheckReportService {
         return result;
     }
     
-    private String computeRiskLevel(CheckReport report){
+    private String computeRiskLevel(CrCheckReport report){
         float score = computeRiskScore(report);
         return computRiskLevel(score);
     }
 
-    private float computeRiskScore(CheckReport report) {
+    private float computeRiskScore(CrCheckReport report) {
         // TODO Auto-generated method stub
         float score = 0;
         if (report != null && !report.getCheckReportResultStat().isEmpty()) {
-            Iterator<CheckReportResultStat> it = report.getCheckReportResultStat().iterator();
+            Iterator<CrCheckReportResultStat> it = report.getCheckReportResultStat().iterator();
             int sum = 0;
             int points = 0;
             while (it.hasNext()) {
-                CheckReportResultStat item = it.next();
+                CrCheckReportResultStat item = it.next();
                 if (item.getImportantGrade().equalsIgnoreCase("A")) {
                     sum = sum + item.getCheckNum() * weight.getLevelA();
                     points = points + item.getUnqualifiedNum() * weight.getLevelA();
@@ -490,4 +505,18 @@ public class CheckReportServiceImpl implements CheckReportService {
         }
         return score;
     }
+
+    @Override
+    public String getReportURL(String reportNum) {
+        // TODO Auto-generated method stub
+        return checkReportRepo.findFilePathByReportNum(reportNum);
+    }
+
+    @Override
+    public String getOriginalName(String reportNum) {
+        // TODO Auto-generated method stub
+        return checkReportRepo.findOriginalNameByReportNum(reportNum);
+    }
+    
+    
 }

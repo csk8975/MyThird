@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class User {
+public class CrUser {
 
     @Id
     @GeneratedValue
@@ -24,11 +24,11 @@ public class User {
     private Date loginTime;
     private int role;
 
-    public User() {
+    public CrUser() {
 
     }
 
-    public User(User user) {
+    public CrUser(CrUser user) {
         this.userName = user.getUserName();
         this.userPassword = user.getUserPassword();
     }

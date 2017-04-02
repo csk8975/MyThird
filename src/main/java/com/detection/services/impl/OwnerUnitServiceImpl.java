@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.detection.model.owner.OwnerUnit;
+import com.detection.model.owner.CrOwnerUnit;
 import com.detection.model.owner.OwnerUnitRepository;
-import com.detection.model.report.entities.CheckRecord;
-import com.detection.model.report.entities.CheckReport;
+import com.detection.model.report.entities.CrCheckRecord;
+import com.detection.model.report.entities.CrCheckReport;
 import com.detection.services.OwnerUnitService;
 import com.detection.util.FormCheck;
 
@@ -48,7 +48,7 @@ public class OwnerUnitServiceImpl implements OwnerUnitService {
             }
             else {
                 Date registTime = new Date();
-                OwnerUnit owner = new OwnerUnit();
+                CrOwnerUnit owner = new CrOwnerUnit();
                 
                 owner.setDutyTel(dutyTel);
                 owner.setDutyPerson(dutyPerson);
@@ -96,12 +96,12 @@ public class OwnerUnitServiceImpl implements OwnerUnitService {
         // TODO Auto-generated method stub
         JSONObject result = new JSONObject();
         int updatedNum = 0;
-        List<OwnerUnit> ownerList = ownerUnitRepo.findAll();
-        Iterator<OwnerUnit> it = ownerList.iterator();
+        List<CrOwnerUnit> ownerList = ownerUnitRepo.findAll();
+        Iterator<CrOwnerUnit> it = ownerList.iterator();
         while(it.hasNext()){
-            OwnerUnit owner = it.next();
-            CheckRecord item = new CheckRecord();
-            Iterator<CheckRecord> recordIt = owner.getCheckRecords().iterator();
+            CrOwnerUnit owner = it.next();
+            CrCheckRecord item = new CrCheckRecord();
+            Iterator<CrCheckRecord> recordIt = owner.getCheckRecords().iterator();
             boolean hasRecord = false;
             while(recordIt.hasNext()){
                 item = recordIt.next();

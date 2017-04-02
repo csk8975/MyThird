@@ -12,13 +12,13 @@ import javax.persistence.Id;
  * @function
  */
 @Entity
-public class UnqualifiedCheckPoint {
+public class CrUnqualifiedCheckPoint {
     @Id
     @GeneratedValue
     private int id;
     private String checkPoint;
     
-    public UnqualifiedCheckPoint(){
+    public CrUnqualifiedCheckPoint(){
         
     }
 

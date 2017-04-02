@@ -14,7 +14,7 @@ import javax.persistence.Id;
  */
 
 @Entity
-public class CheckReportInfo {
+public class CrCheckReportInfo {
     @Id
     private String reportNum;
     private String projectName;
@@ -30,9 +30,8 @@ public class CheckReportInfo {
     private String reportConclusion;
     private String riskLevel;
     private float riskScore;
-    private String filePath;
     
-    public CheckReportInfo(){
+    public CrCheckReportInfo(){
         
     }
 
@@ -140,12 +139,6 @@ public class CheckReportInfo {
         this.riskScore = riskScore;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
 
 }

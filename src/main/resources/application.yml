@@ -29,7 +29,6 @@ isDebug: false
 detectionLevelPrefix: 危险等级
 reportNumForDemo: 16GJA153
 uploadPath: reportUploads/
-downloadPath: reportUploads/
 
 ---
 spring:

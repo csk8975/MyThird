@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.detection.model.user.User;
+import com.detection.model.user.CrUser;
 import com.detection.model.user.UserRepository;
 import com.detection.services.UserControlService;
 import com.detection.util.EncryptionHelper;
