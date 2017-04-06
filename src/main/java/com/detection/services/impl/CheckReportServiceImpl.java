@@ -385,7 +385,7 @@ public class CheckReportServiceImpl implements CheckReportService {
     }
 
     @Override
-    public JSONObject submitExtractCode(String reportNum, String dutyPerson, String dutyTel) throws Exception {
+    public JSONObject submitExtractCode(String extracteCode, String ownerName, String dutyTel) throws Exception {
         // TODO Auto-generated method stub
         JSONObject result = new JSONObject();
         int code = 201;
@@ -393,13 +393,13 @@ public class CheckReportServiceImpl implements CheckReportService {
         String token = null;
         CrOwnerUnit ownerUnit = ownerUnitRepo.findOne(dutyTel);
         if (ownerUnit != null) {
-            if (ownerUnit.getDutyPerson().equals(dutyPerson) && ownerUnit.hasRecord(reportNum)) {
+            if (ownerUnit.getOwnerName().equals(ownerName) && ownerUnit.hasRecord(extracteCode)) {
                 Date date = new Date();
                 token = EncryptionHelper.encryptStringByMD5(dutyTel + date.getTime());
                 ownerUnit.setToken(token);
                 ownerUnit.setLoginTime(date);
                 ownerUnit.setTokenTime(date);
-                ownerUnit.setAuthorizedReportNum(reportNum);
+                ownerUnit.setAuthorizedReportNum(extracteCode);
                 ownerUnitRepo.save(ownerUnit);
                 code = 200;
                 message = "success";

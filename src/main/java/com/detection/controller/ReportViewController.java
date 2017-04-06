@@ -9,9 +9,12 @@ package com.detection.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,28 +71,38 @@ public class ReportViewController {
     }
 
     @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
-    public String uploadReport(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
+    public String uploadReport(@RequestParam("files") List<MultipartFile> files, HttpServletRequest request) throws Exception {
         String result = "redirect:main";
         int permittedRole = 1;
         if (!authService.isLoggedin(request)) {
             result = "redirect:/";
         } else if (!authService.isPermitted(request, permittedRole)) {
             result = "redirect:nopermissions";
-        } else if (!file.isEmpty()) {
+        } else if (!files.isEmpty()) {
             String ctxPath = request.getSession().getServletContext().getRealPath("");
-            checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file,
-                    authService.getUserRealName(request), ctxPath);
+            int total = files.size();
+            int current = 0;
+            Iterator<MultipartFile> it = files.iterator();
+            while(it.hasNext()){
+                current++;
+                System.out.println("正在解析第 "+current+" / "+total+" 份报告。");
+                MultipartFile file = it.next();
+                checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file,
+                        authService.getUserRealName(request), ctxPath);
+            }
+
         }
         return result;
     }
 
     @RequestMapping(value = { "/fetchReport/{reportNum}" }, method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> fetchReportFile(@PathVariable("reportNum") String reportNum,
-            HttpServletResponse response) throws IOException {
+            HttpServletResponse response,HttpServletRequest request) throws IOException {
 
         HttpHeaders headers = new HttpHeaders();
         String filePath = checkReportService.getReportURL(reportNum);
-        if (filePath != null && !filePath.equals("")) {
+        int permittedRole = 1;
+        if (authService.isLoggedin(request) && filePath != null && !filePath.equals("") && authService.isPermitted(request, permittedRole)) {
             FileSystemResource file = new FileSystemResource(filePath);
             if(file.exists()){
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -106,7 +119,6 @@ public class ReportViewController {
         
         return ResponseEntity.notFound().headers(headers).build();
     }
-
     @RequestMapping(value = "/getReportPage", method = RequestMethod.GET)
     public String getReport() {
         return "report/getReportPage";
@@ -139,8 +151,10 @@ public class ReportViewController {
     }
 
     @RequestMapping("/showDetailReportPage")
-    public ModelAndView frequentBusines(@RequestParam String verifyToken) {
+    public ModelAndView frequentBusines(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("report/showDetailReportPage");
+        HttpSession session = request.getSession();
+        String verifyToken = (String)session.getAttribute("ownerToken");
         JSONObject result = checkReportService.getDetailReportInfo(verifyToken);
         mv.addObject("result", result);
         return mv;

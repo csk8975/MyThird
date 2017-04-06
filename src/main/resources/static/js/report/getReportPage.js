@@ -5,14 +5,14 @@
 
 function submitInfoData() {
     var proxy = "report/submitExtractCode";
-    var reportNum = $("#extracteCode").val();
+    var extracteCode = $("#extracteCode").val();
     var ownerName = $("#ownerName").val();
     var dutyTel = $("#dutyTel").val();
-    console.info(reportNum);
-    console.info(dutyPerson);
+    console.info(extracteCode);
+    console.info(ownerName);
     console.info(dutyTel);
     var params = {
-         'reportNum' : reportNum,
+         'extracteCode' : extracteCode,
          'ownerName': ownerName,
          'dutyTel' : dutyTel
     }

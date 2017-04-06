@@ -26,6 +26,7 @@ import com.detection.services.CheckReportService;
  * @function 前端页面请求控制器
  */
 @RestController
+@RequestMapping("report")
 public class ReportDataController {
     
     @Autowired
@@ -39,20 +40,35 @@ public class ReportDataController {
      * 校验reportNum、责任人dutyPerson和责任人电话dutyTel
      * 返回校验token
      */
-/*    @RequestMapping(value = {"/report/submitExtractCode" }, method = RequestMethod.GET)
-    public JSONObject submitExtractCode(@RequestParam String reportNum, 
-            @RequestParam String dutyPerson, @RequestParam String dutyTel, HttpServletRequest request) throws Exception {
+/*    @RequestMapping(value = {"submitExtractCode" }, method = RequestMethod.GET)
+    public JSONObject submitExtractCode(@RequestParam String extracteCode, 
+            @RequestParam String ownerName, @RequestParam String dutyTel, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
-        JSONObject result = checkReportService.submitExtractCode(reportNum, dutyPerson, dutyTel);
+        JSONObject result = checkReportService.submitExtractCode(extracteCode, ownerName, dutyTel);
         String token = result.getString("verifyToken");
-        if(dutyPerson!=null && dutyTel != null){
+        if(ownerName!=null && dutyTel != null){
             session.setAttribute("ownerToken", token);
-            session.setAttribute("watermark", dutyPerson+dutyTel);
+            session.setAttribute("watermark", ownerName+dutyTel);
         }
-        return checkReportService.submitExtractCode(reportNum, dutyPerson, dutyTel);
+        return checkReportService.submitExtractCode(extracteCode, ownerName, dutyTel);
     }*/
+    /**
+     * @author csk
+     * @version 1.0
+     * @throws Exception 
+     * @function 处理风险评估报告责任提取码验证
+     * 校验fetchCode、业主单位ownerUnit 和责任人电话dutyTel
+     * 返回校验token
+     */
+    @RequestMapping(value = {"getOwnerReport" }, method = RequestMethod.GET)
+    public JSONObject getOwnerReport(@RequestParam String extracteCode, 
+            @RequestParam String ownerName, @RequestParam String dutyTel, HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        JSONObject result = new JSONObject();
+        return result;
+    }
     
-    @RequestMapping(value = {"/report/getDetailReportInfo" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"getDetailReportInfo" }, method = RequestMethod.GET)
     public JSONObject getDetailReportInfo(@RequestParam String verifyToken, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String ownerToken = (String)session.getAttribute("ownerToken");
@@ -77,7 +93,7 @@ public class ReportDataController {
      * riskLevel : 极高水平（4）、高水平（3）、中等水平（2）、低水平（1） 
      * code : 200 success, 201 failure
      */
-    @RequestMapping(value = {"/report/getAbstractReportInfo" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"getAbstractReportInfo" }, method = RequestMethod.GET)
     public JSONObject getAbstractReportInfo(@RequestParam String reportNum){
 
         return checkReportService.getAbstractReportInfo(reportNum);
@@ -89,7 +105,7 @@ public class ReportDataController {
      * @function 根据token请求水印数据
      * @param verifyToken  
      */
-    @RequestMapping(value = {"/report/getWatermark"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"getWatermark"}, method = RequestMethod.GET)
     public JSONObject getWatermark(@RequestParam String verifyToken, HttpServletRequest request) {
         JSONObject obj = new JSONObject();
         

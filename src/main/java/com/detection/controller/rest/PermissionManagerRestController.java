@@ -40,18 +40,6 @@ public class PermissionManagerRestController {
     /**
      * @author lcc
      * @version 1.0
-     * @function 校验用户权限接口，传入用户的token，返回用户的权限和用户名（code,200），如果对应的token不存在则，
-     *           code返回201 用户权限：1表示具备查看，所有页面权限，0表示，仅仅具有查看单个页面的权限
-     *
-     */
-    @RequestMapping(value = { "/verifyToken" }, method = RequestMethod.GET)
-    public JSONObject verifyToken(@RequestParam String token) {
-        return userControlService.verifyToken(token);
-    }
-
-    /**
-     * @author lcc
-     * @version 1.0
      * @throws Exception
      * @function 用户登录的API，其中loginName为登录名，userPassword前端使用md5加密后传输,
      *           账号密码正确返回code200，账号密码不正确返回code = 201，role=0, userName=null
