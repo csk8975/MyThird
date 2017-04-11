@@ -94,6 +94,23 @@ public class ReportViewController {
         }
         return result;
     }
+    @RequestMapping(value = "/uploadRiskLevel", method = RequestMethod.POST)
+    public String uploadRiskLevel(@RequestParam("files") List<MultipartFile> files, HttpServletRequest request) throws Exception {
+        String result = "redirect:main";
+        int permittedRole = 1;
+        if (!authService.isLoggedin(request)) {
+            result = "redirect:/";
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
+        } else if (!files.isEmpty()) {
+            Iterator<MultipartFile> it = files.iterator();
+            while(it.hasNext()){
+                MultipartFile file = it.next();
+                checkReportService.uploadRiskLevel(file);
+            }
+        }
+        return result;
+    }
 
     @RequestMapping(value = { "/fetchReport/{reportNum}" }, method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> fetchReportFile(@PathVariable("reportNum") String reportNum,

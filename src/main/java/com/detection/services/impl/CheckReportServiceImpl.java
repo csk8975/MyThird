@@ -11,15 +11,20 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.juli.FileHandler;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.FileEditor;
@@ -62,6 +67,8 @@ public class CheckReportServiceImpl implements CheckReportService {
     private LevelWeightProperties weight;
     @Autowired
     private RiskLevelBoundary boundary;
+    @Autowired
+    private CheckReportInfoRepository checkReportInfoRepo;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -224,12 +231,13 @@ public class CheckReportServiceImpl implements CheckReportService {
         checkReport.setUnqualifiedItemDetail(checkReportUnqualifiedItemList);
         checkReport.setCreatorName(operatorName);
         
-        float riskScore = computeRiskScore(checkReport);
+        //风险评分计算
+/*        float riskScore = computeRiskScore(checkReport);
         checkReport.getCheckReportInfo().setRiskScore(riskScore);
         checkReport.getCheckReportInfo().setRiskLevel(computRiskLevel(riskScore));
         
         System.out.println("完成报告解析：\n风险评分: " +riskScore );
-        System.out.println("报告号码："+reportCover.getReportNum());
+        System.out.println("报告号码："+reportCover.getReportNum());*/
         
         deleteReportByReportNum(reportCover.getReportNum());
         checkReportRepo.save(checkReport);
@@ -516,6 +524,89 @@ public class CheckReportServiceImpl implements CheckReportService {
     public String getOriginalName(String reportNum) {
         // TODO Auto-generated method stub
         return checkReportRepo.findOriginalNameByReportNum(reportNum);
+    }
+
+    @Override
+    public void uploadRiskLevel(MultipartFile file) throws IOException {
+        // TODO Auto-generated method stub
+        InputStream in = file.getInputStream();
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet sheet = wb.getSheetAt(0);
+        String queryQAName = "";
+        String reportNumPattern = "";
+        
+        if(sheet !=null){
+            int rowIndex=0;
+            HSSFRow row = sheet.getRow(rowIndex);
+            while(queryQAName.equals("")){
+                row = sheet.getRow(rowIndex);
+                if(row.getCell(0).getStringCellValue().contains("检测中心")){
+                    queryQAName = "广东建筑消防设施检测中心有限公司";
+                    reportNumPattern = "(\\d\\d\\w{2,3})(\\d{3})";
+                    rowIndex++;
+                    break;
+                }
+                rowIndex++;
+            }
+            int failCount = 0;
+            int successCount = 0;
+            int ambiguousCount = 0;
+            int overallCount = 0;
+            for(; rowIndex<=sheet.getLastRowNum();rowIndex++){
+                row = sheet.getRow(rowIndex);
+                String currentName = row.getCell(0).getStringCellValue();
+                String currentGrade = row.getCell(1).getStringCellValue();
+                if(currentName !=null){
+                    if(currentName.contains("清大")){
+                        queryQAName = "清大安质消防安全管理质量";
+                        reportNumPattern = "(A|B)(\\d{3})";
+                    }
+                    else if(currentName.contains("华建")){
+                        queryQAName = "广东华建电气消防安全检测有限公司";
+                        reportNumPattern = "(A|B)(\\d{3})";
+                    }
+                    else if(currentGrade != null){
+                        Pattern pattern = Pattern.compile(reportNumPattern);
+                        Matcher matcher = pattern.matcher(currentName);
+                        if(matcher.find()){
+                            String reportNum = matcher.group(2);
+                            List<CrCheckReportInfo> reportInfos = checkReportInfoRepo.findbyReportNumLikeAndQaNameLike(reportNum, queryQAName);
+                            Iterator<CrCheckReportInfo> it = reportInfos.iterator();
+                            if(reportInfos.size()>1){
+                                System.out.println(">>>>>>>>>>Warning: More than one report info find by this report name >>>" + currentName);
+                                while(it.hasNext()){
+                                    CrCheckReportInfo reportInfo = it.next();
+                                    System.out.println("    Report Found: " + reportInfo.getReportNum());
+                                }
+                                System.out.println("    Nothing will be changed by these reports!<<<<");
+                                ambiguousCount++;
+                            }
+                            else if(reportInfos.size()==1){
+                                CrCheckReportInfo reportInfo = reportInfos.get(0);
+                                System.out.println("Inserting risk leve into report: "+reportInfo.getReportNum());
+                                System.out.println("    Found by report name:" + currentName);
+                                reportInfo.setRiskLevel("危险" + currentGrade);
+                                checkReportInfoRepo.save(reportInfo);
+                                successCount++;
+                            }
+                            else{
+                                System.out.println(">>>>>>>>>>ERROR: Report not found : " + currentName);
+                                failCount++;
+                            }
+                        }
+                        else{
+                            System.out.println("unkown");
+                        }
+                        overallCount++;
+                    }
+                }
+            }
+            System.out.println("Overall Count : " +overallCount);
+            System.out.println("Success Count : " +successCount);
+            System.out.println("Fail Count : " +failCount);
+            System.out.println("Ambiguous Count : " +ambiguousCount);
+        }
+        wb.close();
     }
     
     

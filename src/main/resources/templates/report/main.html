@@ -7,7 +7,8 @@
         <!--/*/ <th:block th:include="template/template :: bodypart"></th:block> /*/-->
         <div class="content-wrapper">
             <ol class="breadcrumb">
-                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a th:href="@{/main}">首页</a></li>
+                <li><i class="iconfont icon-map mr10 fl"></i>当前位置：<a
+                    th:href="@{/main}">首页</a></li>
                 <li class="active">检测报告主页面</li>
             </ol>
             <section class="main-content animated fadeInRight">
@@ -23,13 +24,20 @@
                                 <a class="btn btn-default btn-export" th:href="@{javascript:;}">
                                     <i class="iconfont icon-export fl mr5"></i>导出报告
                                 </a> -->
-                                <a class="btn btn-default btn-import" th:href="@{javascript:;}">
-                                    <i class="iconfont icon-import fl mr5"></i>导入
+                                <a id = "btn-import-check-report" class="btn btn-default btn-import"
+                                    th:href="@{javascript:;}"> <i
+                                    class="iconfont icon-import fl mr5"></i>导入检测报告
+                                </a> 
+                                <a id ="btn-import-risk-level" class="btn btn-default btn-import"
+                                    th:href="@{javascript:;}"> <i
+                                    class="iconfont icon-import fl mr5"></i>导入等级结果
                                 </a>
                             </div>
                         </div>
                         <div class="sectionMain">
-                            <table id="reportListTable" class="cell-border table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                            <table id="reportListTable"
+                                class="cell-border table table-hover table-striped table-bordered"
+                                cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
                                         <th>报告编码</th>
@@ -49,9 +57,18 @@
                 </div>
             </section>
             <form id="import-dialog" enctype="multipart/form-data"
-                th:action="@{/uploadReport}" method="post" class="dialog">
+                th:action="@{/uploadReport}" method="post"
+                class="dialog">
                 <div class="form-group">
-                    <input type="file" id="inputfile" name="files" multiple="multiple" >
+                    <input type="file" id="inputfile" name="files"
+                        multiple="multiple">
+                </div>
+            </form>
+            <form id="import-risk-level-dialog" enctype="multipart/form-data"
+                th:action="@{/uploadRiskLevel}" method="post"
+                class="dialog">
+                <div class="form-group">
+                    <input type="file" id="inputfile" name="files" multiple="multiple">
                 </div>
             </form>
         </div>

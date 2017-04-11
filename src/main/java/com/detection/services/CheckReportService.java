@@ -112,5 +112,7 @@ public interface CheckReportService {
     public String getReportURL(String reportNum);
 
     public String getOriginalName(String reportNum);
+    
+    public void uploadRiskLevel(MultipartFile file) throws IOException;
 }
 

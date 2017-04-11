@@ -65,8 +65,8 @@ $(function() {
         buttonText : "选择文件"
     });
 
-    // 导入数据
-    $('.btn-import').on('click', function() {
+    // 导入检测报告数据
+    $('#btn-import-check-report').on('click', function() {
         layer.open({
             type : 1,
             title : '导入检测报告',
@@ -83,6 +83,26 @@ $(function() {
             content : $('#import-dialog')
         });
     });
+    
+    // 导入评分结果数据
+    $('#btn-import-risk-level').on('click', function() {
+        layer.open({
+            type : 1,
+            title : '导入评定结果',
+            area : '650px',
+            btn : [ '导入', '关闭' ],
+            yes : function(index, layero) {
+                layer.msg("正在导入评定结果，请稍候...");
+                $("#import-risk-level-dialog").submit();
+            },
+            btn2 : function(index, layero) {
+
+            },
+            shadeClose : true,
+            content : $('#import-risk-level-dialog')
+        });
+    });
+    
     // 批量删除
     $('.btn-batchdelete').on('click', function() {
         layer.confirm('是否批量删除选中数据记录?', {
