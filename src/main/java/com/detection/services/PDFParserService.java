@@ -9,6 +9,7 @@ package com.detection.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -36,9 +37,10 @@ public interface PDFParserService {
     /**
      * @author lcc
      * @version 1.0
+     * @throws ParseException 
      * @function 根据文件解析检测报告的PDF封面
      */
-    public Cover processOnCover(String paragraph);
+    public Cover processOnCover(String paragraph) throws ParseException;
     
     /**
      * @author lcc

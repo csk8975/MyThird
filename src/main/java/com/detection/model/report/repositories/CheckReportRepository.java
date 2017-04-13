@@ -16,5 +16,8 @@ public interface CheckReportRepository extends JpaRepository<CrCheckReport, Stri
 
     @Query(value="SELECT t.original_name FROM cr_check_report t WHERE t.report_num = ?1", nativeQuery = true)
     public String findOriginalNameByReportNum(String reportNum);
+    
+    @Query(value="SELECT t.report_num FROM cr_check_report t WHERE t.fetch_code = ?1", nativeQuery = true)
+    public String findReportNumByFetchCode(String fetchCode);
 
 }

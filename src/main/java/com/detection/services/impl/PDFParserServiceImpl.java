@@ -9,7 +9,11 @@ package com.detection.services.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -138,7 +142,7 @@ public class PDFParserServiceImpl implements PDFParserService {
     }
 
     @Override
-    public Cover processOnCover(String paragraph) {
+    public Cover processOnCover(String paragraph) throws ParseException {
         Cover cover = new Cover();
         String[] lines = paragraph.split(getLineEndByOS());
         if (isDebug) {
@@ -152,11 +156,13 @@ public class PDFParserServiceImpl implements PDFParserService {
         Pattern projectAddress = Pattern.compile("项目地址(:|：| )\\s*(.*)\\s*$");
         Pattern agentName = Pattern.compile("委托单位\\s*(.*)\\s*$");
         Pattern qaName = Pattern.compile("检测单位(:|：| )\\s*(.*)\\s*$");
-        Pattern reportNum = Pattern.compile("天消\\s*([a-z0-9A-Z]{8})\\s*$");
+        //Pattern reportNum = Pattern.compile("天消\\s*([a-z0-9A-Z]{8})\\s*$");
+        Pattern reportNum = Pattern.compile("\\d{2}[a-zA-Z]{2}(A|B)(\\d{3})\\s*$");
         Pattern qaAddress = Pattern.compile("检测单位地址(:|：| )\\s*(.*)\\s*$");
         Pattern contactTel = Pattern.compile("电\\s+话(:|：| )\\s*(.*)\\s*$");
         Pattern contactFax = Pattern.compile("传\\s+真(:|：| )\\s*(.*)\\s*$");
         Pattern contactPostcode = Pattern.compile("邮\\s+编(:|：| )\\s*(.*)\\s*$");
+        Pattern reportDate = Pattern.compile("\\d{4}年\\d{1,2}月\\d{1,2}日");
 
         int projectNameLine = 0;
         int projectAddrLine = 0;
@@ -193,7 +199,7 @@ public class PDFParserServiceImpl implements PDFParserService {
             }
             m = reportNum.matcher(line);
             if (m.find()) {
-                cover.setReportNum(m.group(1).replace(" ", "").trim());
+                cover.setReportNum(m.group(0).replace(" ", "").trim());
                 globalReportNum = cover.getReportNum();
                 continue;
             }
@@ -215,6 +221,13 @@ public class PDFParserServiceImpl implements PDFParserService {
             m = contactPostcode.matcher(line);
             if (m.find()) {
                 cover.setContactPostcode(m.group(2).replace(" ", "").trim());
+                continue;
+            }
+            m = reportDate.matcher(line);
+            if (m.find()) {
+                String reportDateStr = m.group(0).replace(" ", "").trim();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+                cover.setReportDate(sdf.parse(reportDateStr));
                 continue;
             }
         }

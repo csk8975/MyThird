@@ -1,7 +1,7 @@
 spring:
   profiles:
     active:
-      - prod
+      - dev
   thymeleaf:
     mode: LEGACYHTML5
 
@@ -83,7 +83,7 @@ spring:
   profiles: prod
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/xiaofang?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/fire_data?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8
     username: root
     password: Fire@gyky408..
   jpa:

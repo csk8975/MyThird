@@ -40,18 +40,22 @@ public class ReportDataController {
      * 校验reportNum、责任人dutyPerson和责任人电话dutyTel
      * 返回校验token
      */
-/*    @RequestMapping(value = {"submitExtractCode" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"submitExtractCode" }, method = RequestMethod.GET)
     public JSONObject submitExtractCode(@RequestParam String extracteCode, 
             @RequestParam String ownerName, @RequestParam String dutyTel, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         JSONObject result = checkReportService.submitExtractCode(extracteCode, ownerName, dutyTel);
+        JSONObject finalResult  = new JSONObject();
         String token = result.getString("verifyToken");
-        if(ownerName!=null && dutyTel != null){
+        String dutyPerson = result.getString("dutyPerson");
+        if(dutyPerson!=null && token != null && dutyTel !=null){
             session.setAttribute("ownerToken", token);
-            session.setAttribute("watermark", ownerName+dutyTel);
+            session.setAttribute("watermark", dutyPerson+dutyTel);
         }
-        return checkReportService.submitExtractCode(extracteCode, ownerName, dutyTel);
-    }*/
+        finalResult.put("code", result.getString("code"));
+        finalResult.put("message", result.getString("message"));
+        return finalResult;
+    }
     /**
      * @author csk
      * @version 1.0

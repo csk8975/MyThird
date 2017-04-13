@@ -7,6 +7,8 @@
  */
 package com.detection.model.pdfparse;
 
+import java.util.Date;
+
 public class Cover {
     private String reportNum = null;
     private String projectName = null;
@@ -18,6 +20,7 @@ public class Cover {
     private String contactFax = null;
     private String contactPostcode = null;
     private String message = null;
+    private Date reportDate = null;
     // 消防结论
     private String reportConclusion;
     public String getReportNum() {
@@ -99,4 +102,11 @@ public class Cover {
     public void setReportConclusion(String reportConclusion) {
         this.reportConclusion = reportConclusion;
     }
+    public Date getReportDate() {
+        return reportDate;
+    }
+    public void setReportDate(Date reportDate) {
+        this.reportDate = reportDate;
+    }
+    
 }

@@ -64,14 +64,6 @@ public interface CheckReportService {
     /**
      * @author csk
      * @version 1.0
-     * @throws IOException 
-     * @function 按条件查找报告
-     */
-    public JSONObject getReportByCondition(String projectName, String reportNum, String riskLevel, String qaName);
-    
-    /**
-     * @author csk
-     * @version 1.0
      * @function 获取评估项目概况表的摘要信息，包括：
      * reportNum ： 项目号
      * reportDate : 评估日期
@@ -114,5 +106,7 @@ public interface CheckReportService {
     public String getOriginalName(String reportNum);
     
     public void uploadRiskLevel(MultipartFile file) throws IOException;
+
+    void deleteReportRecordByReportNum(String reportNum);
 }
 

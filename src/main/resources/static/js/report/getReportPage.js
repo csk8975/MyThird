@@ -5,7 +5,7 @@
 
 function submitInfoData() {
     var proxy = "report/submitExtractCode";
-    var extracteCode = $("#extracteCode").val();
+    var extracteCode = $("#fetchCode").val();
     var ownerName = $("#ownerName").val();
     var dutyTel = $("#dutyTel").val();
     console.info(extracteCode);
@@ -18,7 +18,7 @@ function submitInfoData() {
     }
     $.getJSON(proxy, params, function(result){
         if(result == null || 200 != result.code) {
-            alert("输入信息有误！");
+            alert("验证失败，输入信息有误！");
             self.location = 'getReportPage';
         } else {
             //sessionStorage.setItem('verifyToken', result.verifyToken);

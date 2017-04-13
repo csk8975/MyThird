@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.detection.model.user.CrUser;
@@ -77,8 +78,10 @@ public class PermissionManagerRestController {
      * 
      */
     @RequestMapping(value = { "/userLogout" }, method = RequestMethod.GET)
-    public JSONObject userLogout(@RequestParam String userName){
-        return userControlService.userLogout(userName);
+    public ModelAndView userLogout(@RequestParam String userName){
+        ModelAndView mv = new ModelAndView("redirect:/");
+        mv.addObject("result", userControlService.userLogout(userName));
+        return mv;
         
     }
 }

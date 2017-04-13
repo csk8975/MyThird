@@ -19,10 +19,13 @@ $(function() {
                 var year = date.getFullYear();
                 var month = date.getMonth() + 1;
                 var day = date.getDate();
-                $('.reportNum').html(result.reportNum);
+                $('#reportNum').html(result.reportNum);
+                $('#fetchCode').html(result.fetchCode);
                 $('#detectDate').html(result.reportDate);
                 $('#projectName').html(result.projectName+": ");
-                $('#checkbox_a' + result.riskLevel).attr("checked", true);
+                if(result.riskLevel != -1){
+                    $('#checkbox_a' + result.riskLevel).attr("checked", true);
+                }
                 $('#publishData').html(year + '-' + month + '-' + day);
             }
         });

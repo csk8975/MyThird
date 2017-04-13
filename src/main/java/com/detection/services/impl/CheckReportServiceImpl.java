@@ -150,8 +150,9 @@ public class CheckReportServiceImpl implements CheckReportService {
         checkReport.setFilePath(upFilePath);
         checkReport.setFileName(encryptedFileName);
         checkReport.setOriginalName(fileName);
-        checkReport.setCreateDate(new Date());
+        checkReport.setCreateDate(reportCover.getReportDate());
         checkReport.setModifyDate(new Date());
+        checkReport.setFetchCode(reportCover.getReportNum().substring(4)+upFilePath.substring(upFilePath.length()-4));
 
         // process on report cover info
         checkReportInfo.setReportNum(reportCover.getReportNum());
@@ -239,8 +240,9 @@ public class CheckReportServiceImpl implements CheckReportService {
         System.out.println("完成报告解析：\n风险评分: " +riskScore );
         System.out.println("报告号码："+reportCover.getReportNum());*/
         
-        deleteReportByReportNum(reportCover.getReportNum());
+        deleteReportRecordByReportNum(reportCover.getReportNum());
         checkReportRepo.save(checkReport);
+        System.out.println("Finish Parsing report:" + reportCover.getReportNum());
         result = true;
 
         return result;
@@ -249,11 +251,19 @@ public class CheckReportServiceImpl implements CheckReportService {
     @Override
     public void deleteReportByReportNum(String reportNum) {
         if (checkReportRepo.findOne(reportNum) != null) {
+            System.out.println(">>>>>>Warning: Both report record and file will be deleted:" +reportNum);
             String filePath = checkReportRepo.findFilePathByReportNum(reportNum);
             File file = new File(filePath);
             if(file.exists() && file.isFile()){
                 file.delete();
             }
+            checkReportRepo.delete(reportNum);
+        }
+    }
+    @Override
+    public void deleteReportRecordByReportNum(String reportNum) {
+        if (checkReportRepo.findOne(reportNum) != null) {
+            System.out.println(">>>>>>Conflicts exist..Old record will be deleted:" +reportNum);
             checkReportRepo.delete(reportNum);
         }
     }
@@ -288,21 +298,13 @@ public class CheckReportServiceImpl implements CheckReportService {
     }
 
     @Override
-    public JSONObject getReportByCondition(String projectName, String reportNum, String riskLevel, String qaName) {
-        // TODO Auto-generated method stub
-        if (reportNum != null && !reportNum.equals("")) {
-            CrCheckReport result = checkReportRepo.findOne(reportNum);
-        }
-        return null;
-    }
-
-    @Override
     public JSONObject getAbstractReportInfo(String reportNum) {
         // TODO Auto-generated method stub
         JSONObject result = new JSONObject();
         int code = 201;
         String message = "Fail.Report Not Found.";
         String reportDate = null;
+        String fetchCode = null;
         String projectName = null;
         String riskLevel = null;
 
@@ -311,25 +313,32 @@ public class CheckReportServiceImpl implements CheckReportService {
             code = 200;
             message = "success";
             reportDate = DateUtil.getYearMonthDateByHyphen(report.getCreateDate());
+            fetchCode = report.getFetchCode();
             projectName = report.getCheckReportInfo().getProjectName();
             riskLevel = report.getCheckReportInfo().getRiskLevel();
         }
         result.put("code", code);
         result.put("message", message);
         result.put("reportNum", reportNum);
+        result.put("fetchCode", fetchCode);
         result.put("reportDate", reportDate);
         result.put("projectName", projectName);
-        if(riskLevel.equalsIgnoreCase("危险等级1")){
-            result.put("riskLevel", 1);
-        }
-        else if(riskLevel.equalsIgnoreCase("危险等级2")){
-            result.put("riskLevel", 2);
-        }
-        else if(riskLevel.equalsIgnoreCase("危险等级3")){
-            result.put("riskLevel", 3);
+        if(riskLevel != null){
+            if(riskLevel.equalsIgnoreCase("危险等级1")){
+                result.put("riskLevel", 1);
+            }
+            else if(riskLevel.equalsIgnoreCase("危险等级2")){
+                result.put("riskLevel", 2);
+            }
+            else if(riskLevel.equalsIgnoreCase("危险等级3")){
+                result.put("riskLevel", 3);
+            }
+            else{
+                result.put("riskLevel", 4);
+            }
         }
         else{
-            result.put("riskLevel", 4);
+            result.put("riskLevel", -1);
         }
 
         return result;
@@ -363,7 +372,7 @@ public class CheckReportServiceImpl implements CheckReportService {
                 message = "success";
                 reportNum = report.getReportNum();
                 riskLevel = reportInfo.getRiskLevel();
-                riskScore = String.format("%.2f",reportInfo.getRiskScore());
+                //riskScore = String.format("%.2f",reportInfo.getRiskScore());
                 reportDate = DateUtil.getYearMonthDateByChinese(report.getCreateDate());
                 reportConclusion = reportInfo.getReportConclusion();
                 rectifyComments = "暂无";
@@ -372,6 +381,10 @@ public class CheckReportServiceImpl implements CheckReportService {
                 dutyTel = ownerUnit.getDutyTel();
                 dutyPerson = ownerUnit.getDutyPerson();
                 ownerUnit.setTokenTime(new Date());
+                ownerUnit.setAuthorizedReportNum(null);
+                ownerUnit.setToken(null);
+                ownerUnitRepo.save(ownerUnit);
+                
             }
         }
 
@@ -399,26 +412,35 @@ public class CheckReportServiceImpl implements CheckReportService {
         int code = 201;
         String message = "Fail. Unkonwn Owner Unit.";
         String token = null;
-        CrOwnerUnit ownerUnit = ownerUnitRepo.findOne(dutyTel);
-        if (ownerUnit != null) {
-            if (ownerUnit.getOwnerName().equals(ownerName) && ownerUnit.hasRecord(extracteCode)) {
-                Date date = new Date();
-                token = EncryptionHelper.encryptStringByMD5(dutyTel + date.getTime());
-                ownerUnit.setToken(token);
-                ownerUnit.setLoginTime(date);
-                ownerUnit.setTokenTime(date);
-                ownerUnit.setAuthorizedReportNum(extracteCode);
-                ownerUnitRepo.save(ownerUnit);
-                code = 200;
-                message = "success";
-            } else {
+        String dutyPerson = null;
+        //CrOwnerUnit ownerUnit = ownerUnitRepo.findOne(dutyTel);
+        CrOwnerUnit ownerUnit = ownerUnitRepo.findByDutyTelAndOwnerNameLike(dutyTel,ownerName);
+        if(ownerUnit != null){
+            String reportNum = checkReportRepo.findReportNumByFetchCode(extracteCode.toUpperCase());
+            dutyPerson = ownerUnit.getDutyPerson();
+            if(reportNum != null && !reportNum.equals("")){
+                String projectName = checkReportInfoRepo.findbyOwnerNameLikeProjectName(ownerName);
+                if(projectName!=null && !projectName.equals("")){
+                    Date date = new Date();
+                    token = EncryptionHelper.encryptStringByMD5(dutyTel + extracteCode + ownerName + date.getTime());
+                    ownerUnit.setToken(token);
+                    ownerUnit.setLoginTime(date);
+                    ownerUnit.setTokenTime(date);
+                    ownerUnit.setAuthorizedReportNum(reportNum);
+                    ownerUnitRepo.save(ownerUnit);
+                    code = 200;
+                    message = "success";
+                }
+            }
+            else {
+                code = 201;
                 message = "Fail.Validation Fail.";
             }
+            result.put("code", code);
+            result.put("message", message);
+            result.put("verifyToken", token);
+            result.put("dutyPerson", dutyPerson);
         }
-        result.put("code", code);
-        result.put("message", message);
-        result.put("verifyToken", token);
-
         return result;
     }
 

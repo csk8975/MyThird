@@ -34,6 +34,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSONObject;
 import com.detection.services.AuthenticationService;
 import com.detection.services.CheckReportService;
+import com.detection.services.UserControlService;
+import com.detection.util.EncryptionHelper;
 
 /**
  *
@@ -43,13 +45,13 @@ import com.detection.services.CheckReportService;
  */
 @Controller
 public class ReportViewController {
-
     @Autowired
     private CheckReportService checkReportService;
-
+    @Autowired
+    private UserControlService userControlService;
     @Autowired
     private AuthenticationService authService;
-
+    
     @Value("${uploadPath}")
     private String uploadPath;
 
@@ -59,7 +61,8 @@ public class ReportViewController {
     }
 
     @RequestMapping(value = { "/main" }, method = RequestMethod.GET)
-    public String main(HttpServletRequest request) {
+    public ModelAndView main(HttpServletRequest request) {
+
         String result = "report/main";
         int permittedRole = 1;
         if (!authService.isLoggedin(request)) {
@@ -67,9 +70,30 @@ public class ReportViewController {
         } else if (!authService.isPermitted(request, permittedRole)) {
             result = "redirect:nopermissions";
         }
-        return result;
+        ModelAndView mv = new ModelAndView(result);
+        mv.addObject("userName", (String)request.getSession().getAttribute("userName"));
+        return mv;
     }
-
+    
+    @RequestMapping(value = { "/embeddedUserLogin" }, method = RequestMethod.GET)
+    public String embeddedUserLogin(@RequestParam String loginName, @RequestParam String userPassword, HttpServletRequest request) throws Exception {
+        JSONObject result = userControlService.userLogin(loginName, userPassword);
+        //JSONObject result = userControlService.userLogin(loginName, EncryptionHelper.encryptStringByMD5(userPassword));
+        HttpSession session = request.getSession();
+        if(result.getIntValue("code") == 200){
+            session.setAttribute("userName", loginName);
+            session.setAttribute("token", result.getString("token"));
+            session.setAttribute("role", result.getString("role"));
+            return "report/main-embedded";
+        }
+        return "redirect:embedded-nopermissions";
+    }
+    
+    @RequestMapping(value = { "/embedded-nopermissions" }, method = RequestMethod.GET)
+    public String embeddedNopermissions() throws Exception {
+        return "errors/embedded-nopermissions";
+    }
+    
     @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
     public String uploadReport(@RequestParam("files") List<MultipartFile> files, HttpServletRequest request) throws Exception {
         String result = "redirect:main";
@@ -85,8 +109,8 @@ public class ReportViewController {
             Iterator<MultipartFile> it = files.iterator();
             while(it.hasNext()){
                 current++;
-                System.out.println("正在解析第 "+current+" / "+total+" 份报告。");
                 MultipartFile file = it.next();
+                System.out.println("正在解析第 "+current+" / "+total+" 份报告: "+ file.getOriginalFilename());
                 checkReportService.uploadAndSaveReport(file.getOriginalFilename(), file,
                         authService.getUserRealName(request), ctxPath);
             }
@@ -169,10 +193,14 @@ public class ReportViewController {
 
     @RequestMapping("/showDetailReportPage")
     public ModelAndView frequentBusines(HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("report/showDetailReportPage");
+        String returnPath = "redirect:getReportPage";
         HttpSession session = request.getSession();
         String verifyToken = (String)session.getAttribute("ownerToken");
         JSONObject result = checkReportService.getDetailReportInfo(verifyToken);
+        if(result.getIntValue("code")==200){
+            returnPath = "report/showDetailReportPage";
+        }
+        ModelAndView mv = new ModelAndView(returnPath);
         mv.addObject("result", result);
         return mv;
     }
