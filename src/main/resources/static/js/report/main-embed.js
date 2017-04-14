@@ -5,7 +5,7 @@
 function deleteReportByReportNumEmbed(reportNum) {
         layer.confirm("确认删除报告："+reportNum+"?",{
             title : '删除检测报告：',
-            area : '650px',
+            area : '350px',
             btn : [ '删除', '取消' ],
             yes : function(index, layero) {
                 //layer.msg("正在删除检测报告，请稍候...");
