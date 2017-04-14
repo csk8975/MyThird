@@ -62,18 +62,6 @@ public class PermissionManagerRestController {
      * @author csk
      * @version 1.0
      * @throws Exception
-     * @function 添加用户
-     * 
-     */
-    @RequestMapping(value = { "/addUser" }, method = RequestMethod.GET)
-    public JSONObject addUser(@RequestParam String userName, String userPassword, String role) throws Exception {
-        return userControlService.addUser(userName, userPassword, role);
-    }
-    
-    /**
-     * @author csk
-     * @version 1.0
-     * @throws Exception
      * @function 注销并清除token
      * 
      */
@@ -84,4 +72,19 @@ public class PermissionManagerRestController {
         return mv;
         
     }
+    
+    @RequestMapping(value = { "/submitNewPass" }, method = RequestMethod.GET)
+    public ModelAndView submitNewPass(@RequestParam String oldPass,@RequestParam String newPass1,@RequestParam String newPass2, HttpServletRequest request){
+        String resultPath = "redirect:changePassword";
+        JSONObject result = new JSONObject();
+        result = userControlService.changePassword((String)request.getSession().getAttribute("userName"),oldPass,newPass1,newPass2);
+        if(result.getIntValue("code")==200){
+            resultPath="redirect:main";
+        }
+        ModelAndView mv = new ModelAndView(resultPath);
+        mv.addObject("result", result);
+        return mv;
+        
+    }
+
 }

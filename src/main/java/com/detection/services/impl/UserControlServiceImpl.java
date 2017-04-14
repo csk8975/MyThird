@@ -157,7 +157,6 @@ public class UserControlServiceImpl implements UserControlService {
         CrUser currentUser = userRepository.findByUserName(userName);
         // TODO Auto-generated method stub
         if (currentUser != null){
-            
             currentUser.setLastLogin(currentUser.getLoginTime());
             currentUser.setToken("");
             currentUser.setTokenUpdateTime(null);
@@ -171,4 +170,32 @@ public class UserControlServiceImpl implements UserControlService {
         return result;
     }
 
+    
+    @Override
+    public JSONObject changePassword(String userName, String oldPass, String newPass1, String newPass2) {
+        int code = 201;
+        String message = "";
+        JSONObject result = new JSONObject();
+        CrUser user = userRepository.findByUserName(userName);
+        if(user.getUserPassword().equalsIgnoreCase(oldPass)){
+            if(newPass1.equals(newPass2)){
+                user.setUserPassword(newPass1);
+                userRepository.save(user);
+                code = 200;
+                message = "success.";
+            }
+            else{
+                code = 201;
+                message = "fail. two new password not the same.";
+            }
+            
+        }
+        else{
+            code = 201;
+            message ="fail,wrong pass.";
+        }
+        result.put("code",code);
+        result.put("message", message);
+        return result;
+    }
 }

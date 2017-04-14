@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<!--/*/ <th:block th:include="template/template :: head"></th:block> /*/-->
-
+<head th:with="title=${' '}" th:include="template/template :: head">
 <body class="fixed-sidebar">
     <div id="wrapper">
         <div class="content-wrapper">
@@ -100,6 +99,6 @@
     <!-- custom -->
     <script th:src="@{/js/normal.custom.js}"></script>
     <script th:src="@{/js/template/template.js}"></script>
-    <script th:src="@{/js/report/main.js}"></script>
+    <script th:src="@{/js/report/main-embed.js}"></script>
 </body>
 </html>

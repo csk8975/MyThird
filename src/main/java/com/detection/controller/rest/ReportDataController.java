@@ -56,21 +56,6 @@ public class ReportDataController {
         finalResult.put("message", result.getString("message"));
         return finalResult;
     }
-    /**
-     * @author csk
-     * @version 1.0
-     * @throws Exception 
-     * @function 处理风险评估报告责任提取码验证
-     * 校验fetchCode、业主单位ownerUnit 和责任人电话dutyTel
-     * 返回校验token
-     */
-    @RequestMapping(value = {"getOwnerReport" }, method = RequestMethod.GET)
-    public JSONObject getOwnerReport(@RequestParam String extracteCode, 
-            @RequestParam String ownerName, @RequestParam String dutyTel, HttpServletRequest request) throws Exception {
-        HttpSession session = request.getSession();
-        JSONObject result = new JSONObject();
-        return result;
-    }
     
     @RequestMapping(value = {"getDetailReportInfo" }, method = RequestMethod.GET)
     public JSONObject getDetailReportInfo(@RequestParam String verifyToken, HttpServletRequest request) {

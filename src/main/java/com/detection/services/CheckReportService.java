@@ -51,7 +51,7 @@ public interface CheckReportService {
      * @throws IOException 
      * @function 按报告编号删除一份报告
      */
-    public void deleteReportByReportNum(String reportNum);
+    public JSONObject deleteReportByReportNum(String reportNum);
     
     /**
      * @author csk
@@ -90,13 +90,7 @@ public interface CheckReportService {
      */
     public JSONObject submitExtractCode(String reportNum, String dutyPerson, String dutyTel) throws Exception;
     
-    /**
-     * @author csk
-     * @version 1.0
-     * @function 获取pdf文件
-     */
-    public JSONObject getReportFile(String fileName);
-    
+   
     public boolean updateRiskLevel(String reportNum);
     
     public void updateAllRiskLevel();

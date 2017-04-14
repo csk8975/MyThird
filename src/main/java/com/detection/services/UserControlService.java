@@ -15,4 +15,5 @@ public interface UserControlService {
     public JSONObject addUser(String userName, String userPassword, String role) throws Exception;
     public JSONObject userLogin(String loginName, String userPassword) throws Exception;
     public JSONObject userLogout(String userName);
+    public JSONObject changePassword(String userName,String oldPass, String newPass1,String newPass2);
 }
