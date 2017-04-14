@@ -162,7 +162,7 @@ public class PDFParserServiceImpl implements PDFParserService {
         Pattern contactTel = Pattern.compile("电\\s+话(:|：| )\\s*(.*)\\s*$");
         Pattern contactFax = Pattern.compile("传\\s+真(:|：| )\\s*(.*)\\s*$");
         Pattern contactPostcode = Pattern.compile("邮\\s+编(:|：| )\\s*(.*)\\s*$");
-        Pattern reportDate = Pattern.compile("\\d{4}年\\d{1,2}月\\d{1,2}日");
+        Pattern reportDate = Pattern.compile("\\s*\\d{4}\\s*年\\s*\\d{1,2}\\s*月\\s*\\d{1,2}\\s*日\\s*");
 
         int projectNameLine = 0;
         int projectAddrLine = 0;

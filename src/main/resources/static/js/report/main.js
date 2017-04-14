@@ -47,9 +47,10 @@ $(function() {
                                     item[1] = result.data[d].projectName; // 报告名称
                                     item[2] = result.data[d].projectAddress; // 项目地址
                                     item[3] = result.data[d].riskLevel; // 风险等级
-                                    item[4] = result.data[d].qaName; // 检测单位
-                                    item[5] = result.data[d].contactTel; // 联系电话
-                                    item[6] = '<div class="table-toolbar tc">'
+                                    item[4] = result.data[d].detectDate;//检测时间
+                                    item[5] = result.data[d].qaName; // 检测单位
+                                    item[6] = result.data[d].contactTel; // 联系电话
+                                    item[7] = '<div class="table-toolbar tc">'
                                             + '<a class="evaluateReport" target="_blank" href="showAbstractReportPage?reportNum='
                                             + result.data[d].reportNum
                                             + '">分析报告</a>;'

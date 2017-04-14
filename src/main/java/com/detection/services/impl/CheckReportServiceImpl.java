@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -295,7 +296,16 @@ public class CheckReportServiceImpl implements CheckReportService {
             item.put("projectName", checkReportInfo.getProjectName());
             item.put("projectAddress", checkReportInfo.getProjectAddress());
             item.put("riskLevel", checkReportInfo.getRiskLevel());
-            item.put("riskLevel", checkReportInfo.getRiskLevel());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+            Date dectectDate = checkReport.getCreateDate();
+            String dectectDateStr  = "";
+            if(dectectDate == null){
+                dectectDateStr = "无数据";
+            }
+            else{
+                dectectDateStr = sdf.format(dectectDate);
+            }
+            item.put("detectDate", dectectDateStr);
             item.put("qaName", checkReportInfo.getQaName());
             item.put("contactTel", checkReportInfo.getContactTel());
             dataList.add(item);
