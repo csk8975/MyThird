@@ -2,30 +2,6 @@
  * 
  */
 
-function deleteReportByReportNum(reportNum) {
-    layer.open({
-        type : 1,
-        title : "确认删除报告："+reportNum+"?",
-        area : '650px',
-        btn : [ '删除', '取消' ],
-        yes : function(index, layero) {
-            //layer.msg("正在删除检测报告，请稍候...");
-            $.get("deleteReportByReportNum?reportNum=" + reportNum, function(data,status) {
-                if(data.code == 200){
-                    layer.msg("删除成功");
-                }
-                else{
-                    layer.msg("删除失败：" + data.message);
-                }
-                setTimeout(function(){self.location = 'main';},500);
-            });
-        },
-        btn2 : function(index, layero) {
-        },
-        shadeClose : true,
-    });
-}
-
 $(function() {
     // show reportList
     function showReportList() {
@@ -72,6 +48,30 @@ $(function() {
                         });
     }
 
+
+    function deleteReportByReportNum(reportNum) {
+        layer.confirm("确认删除报告："+reportNum+"?",{
+            title : '删除检测报告：',
+            area : '650px',
+            btn : [ '删除', '取消' ],
+            yes : function(index, layero) {
+                //layer.msg("正在删除检测报告，请稍候...");
+                $.get("deleteReportByReportNum?reportNum=" + reportNum, function(data,status) {
+                    if(data.code == 200){
+                        layer.msg("删除成功");
+                    }
+                    else{
+                        layer.msg("删除失败：" + data.message);
+                    }
+                    setTimeout(function(){self.location = 'embeddedMain';},500);
+                });
+            },
+            btn2 : function(index, layero) {
+            },
+            shadeClose : true,
+        });
+    }
+    
     // 文件上传
     $(":file").filestyle({
         icon : false,

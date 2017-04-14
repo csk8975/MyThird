@@ -247,9 +247,12 @@ public class CheckReportServiceImpl implements CheckReportService {
 
         return result;
     }
-
+  //删除数据记录及删除文件。用于彻底删除报告
     @Override
-    public void deleteReportByReportNum(String reportNum) {
+    public JSONObject deleteReportByReportNum(String reportNum) {
+        JSONObject result = new JSONObject();
+        int code = 201;
+        String message = "记录不存在。";
         if (checkReportRepo.findOne(reportNum) != null) {
             System.out.println(">>>>>>Warning: Both report record and file will be deleted:" +reportNum);
             String filePath = checkReportRepo.findFilePathByReportNum(reportNum);
@@ -258,8 +261,15 @@ public class CheckReportServiceImpl implements CheckReportService {
                 file.delete();
             }
             checkReportRepo.delete(reportNum);
+            code = 200;
+            message = "删除成功";
         }
+        result.put("code", code);
+        result.put("message", message);
+        return result;
     }
+    
+    //仅删除数据记录，不删除文件。用于重新上传覆盖
     @Override
     public void deleteReportRecordByReportNum(String reportNum) {
         if (checkReportRepo.findOne(reportNum) != null) {
@@ -445,16 +455,6 @@ public class CheckReportServiceImpl implements CheckReportService {
     }
 
     @Override
-    public JSONObject getReportFile(String fileName) {
-
-        // TODO Auto-generated method stub
-        JSONObject result = new JSONObject();
-        //List<CrCheckReport> reportList = checkReportRepo.findByFetchCode(fileName);
-
-        return result;
-    }
-
-    @Override
     public boolean updateRiskLevel(String reportNum) {
         // TODO Auto-generated method stub
         boolean result = false;
@@ -630,6 +630,6 @@ public class CheckReportServiceImpl implements CheckReportService {
         }
         wb.close();
     }
-    
+
     
 }

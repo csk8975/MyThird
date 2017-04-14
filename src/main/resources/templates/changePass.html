@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html>
-<head th:with="title=${'查看详细报告'}" th:include="template/reporttemplate::head">
+<head th:with="title=${'更改密码'}" th:include="template/reporttemplate::head">
 </head>
 <body>
     <div id="wrapper fixed-sidebar">
@@ -13,40 +13,42 @@
             <section class="main-content animated fadeInRight">
                 <form>
                        <div class="code-group">
-                        <div class="tit">查询单位名：</div>
+                        <div class="tit">原密码：</div>
                         <div class="input-control">
-                            <input id="ownerName" type="text" value="" placeholder="查询单位名称" />
+                            <input id="oldPass" type="text" value="" placeholder="原密码" />
                         </div>
                     </div>
                     <div class="code-group">
-                        <div class="tit">责任人手机：</div>
+                        <div class="tit">新密码：</div>
                         <div class="input-control">
-                            <input id="dutyTel" type="text" value="" placeholder="查询单位责任人手机号码" 
-                             onkeyup="value=this.value.replace(/\D+/g,'')"/>
+                            <input id="newPass1" type="text" value=""
+                                placeholder="新密码" />
                         </div>
                     </div>
                     <div class="code-group">
-                        <div class="tit">报告提取码：</div>
+                        <div class="tit">再次输入：</div>
                         <div class="input-control">
-                            <input id="fetchCode" type="text" value=""
-                                placeholder="分析报告提取码" />
+                            <input id="newPass2" type="text" value=""
+                                placeholder="再次输入" />
                         </div>
                     </div>
 
                     <div class="code-group tc">
                         <a class="btn-submit"
                             style='display: inline-block; line-height: 40px;'
-                            onclick="submitInfoData()">提交</a>
-                        <!-- <a id="submitInfo" class="btn-submit" style='display: inline-block; line-height: 40px;'>提交</a> -->
+                            onclick="submitNewPass()">提交</a>
                     </div>
                     <div class="tips">
-                        <span class="tit">温馨提示：</span> <span>请正确输入您的分析报告提取码及责任人手机号！</span>
+                        <span class="tit">温馨提示：</span> <span>请牢记您的密码！</span>
+                    </div>
+                    <div class="tips">
+                        <span class="tit">温馨提示：</span> <span>请牢记您的密码！</span>
                     </div>
                 </form>
             </section>
         </div>
     </div>
     <!--/*/ <th:block th:include="template/reporttemplate :: footerpart"></th:block> /*/-->
-    <script th:src="@{/js/report/getReportPage.js}"></script>
+    <script th:src="@{/js/report/changePassword.js}"></script>
 </body>
 </html>

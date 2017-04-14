@@ -27,13 +27,5 @@ public class OwnerUnitRestController {
     @Autowired
     private OwnerUnitService ownerUnitService;
     
-    /**
-     * @function binding reports and ownerunits
-     * @return
-     */
-    @RequestMapping(value = "/registration/test", method = RequestMethod.GET)
-    public JSONObject testFetch(){
-        
-        return ownerUnitService.testFetchReport();
-    }
+
 }

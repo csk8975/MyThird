@@ -34,6 +34,7 @@ public class ReportRestController {
     @Autowired
     private AuthenticationService authService;
     
+    
     @RequestMapping(value = {"/getReportList"} , method = RequestMethod.GET)
     public JSONObject getReportList( HttpServletRequest request ){
         //
@@ -46,24 +47,20 @@ public class ReportRestController {
         }
         return result;
     }
-
     
-    @RequestMapping(value = {"/testSession"} , method = RequestMethod.GET)
-    public JSONObject testSession( HttpServletRequest request ){
-        HttpSession session = request.getSession();
+    @RequestMapping(value = { "/deleteReportByReportNum" }, method = RequestMethod.GET)
+    public JSONObject deleteReportByReportNum(@RequestParam String reportNum, HttpServletRequest request) {
         JSONObject result = new JSONObject();
-        result.put("id:", session.getId());
-        result.put("testattr", session.getAttribute("test"));
-        return result;
-    }
-    
-    @RequestMapping(value = {"/modifySession"} , method = RequestMethod.GET)
-    public JSONObject modifySession( HttpServletRequest request ){
-        HttpSession session = request.getSession(); 
-        session.setAttribute("test", "测试一");
-        JSONObject result = new JSONObject();
-        result.put("id:", session.getId());
-        result.put("testattr", session.getAttribute("test"));
+        int permittedRole = 1;
+        if (!authService.isLoggedin(request)) {
+            result.put("code", 201);
+            result.put("message", "请先登录！");
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result.put("code", 201);
+            result.put("message", "您没有权限！");
+        } else if (reportNum != null) {
+            result = service.deleteReportByReportNum(reportNum);
+        }
         return result;
     }
 

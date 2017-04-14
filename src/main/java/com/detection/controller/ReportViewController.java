@@ -89,6 +89,18 @@ public class ReportViewController {
         return "redirect:embedded-nopermissions";
     }
     
+    @RequestMapping(value = { "/embeddedMain" }, method = RequestMethod.GET)
+    public String embeddedMain(HttpServletRequest request) throws Exception {
+        String result = "report/main-embedded";
+        int permittedRole = 1;
+        if (!authService.isLoggedin(request)) {
+            result = "redirect:nopermissions";
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
+        }
+        return result;
+    }
+    
     @RequestMapping(value = { "/embedded-nopermissions" }, method = RequestMethod.GET)
     public String embeddedNopermissions() throws Exception {
         return "errors/embedded-nopermissions";
@@ -177,19 +189,7 @@ public class ReportViewController {
         return result;
     }
 
-    @RequestMapping(value = { "/deleteReportByReportNum" }, method = RequestMethod.GET)
-    public String deleteReportByReportNum(@RequestParam String reportNum, HttpServletRequest request) {
-        String result = "redirect:main";
-        int permittedRole = 1;
-        if (!authService.isLoggedin(request)) {
-            result = "redirect:/";
-        } else if (!authService.isPermitted(request, permittedRole)) {
-            result = "redirect:nopermissions";
-        } else if (reportNum != null) {
-            checkReportService.deleteReportByReportNum(reportNum);
-        }
-        return result;
-    }
+
 
     @RequestMapping("/showDetailReportPage")
     public ModelAndView frequentBusines(HttpServletRequest request) {
@@ -205,6 +205,20 @@ public class ReportViewController {
         return mv;
     }
 
+    @RequestMapping(value = { "/changePassword" }, method = RequestMethod.GET)
+    public String changePassword(HttpServletRequest request){
+        String result = "redirect:main";
+        int permittedRole = 1;
+        if (!authService.isLoggedin(request)) {
+            result = "redirect:/";
+        } else if (!authService.isPermitted(request, permittedRole)) {
+            result = "redirect:nopermissions";
+        } else {
+            result = "changePass";
+        }
+        return result;
+    }
+    
     @RequestMapping({ "/404" })
     public String pageNotFound() {
         return "errors/404";
