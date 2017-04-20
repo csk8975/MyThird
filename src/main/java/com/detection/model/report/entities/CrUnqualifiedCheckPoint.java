@@ -1,5 +1,6 @@
 package com.detection.model.report.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,6 +17,7 @@ public class CrUnqualifiedCheckPoint {
     @Id
     @GeneratedValue
     private int id;
+    @Column(length = 2048)
     private String checkPoint;
     
     public CrUnqualifiedCheckPoint(){
